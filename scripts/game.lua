@@ -14,6 +14,7 @@ end
 function Game:process( delta )
 	if Player.ready then
 		Player:process( delta )
+		Bullets:process( delta )
 	end
 end
 
@@ -23,6 +24,7 @@ function Game:draw()
 	RL_BeginMode2D( Camera.camera )
 		Room:draw()
 		Player:draw()
+		Bullets:draw()
 	RL_EndMode2D()
 end
 

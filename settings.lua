@@ -10,6 +10,7 @@ return {
 		exit = KEY_ESCAPE,
 		right = KEY_RIGHT,
 		left = KEY_LEFT,
-		jump = KEY_SPACE,
+		jump = KEY_X,
+		shoot = KEY_C,
 	},
 }

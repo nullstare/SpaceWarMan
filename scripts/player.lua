@@ -11,6 +11,9 @@ function Player:new()
 	object.JUMP_STR = 3
 	object.WALK_ANIM_SPEED = 12
 
+	object.BULLET_SPEED = 200
+	object.BULLET_RANGE = 100
+
 	object.ready = false
 	object.position = Vec2:new()
 	object.sprite = nil
@@ -19,6 +22,8 @@ function Player:new()
 	object.velocity = Vec2:new( 0, -0.01 ) -- Tiny push upwards to get out of floor if put right onto it.
 	object.colRect = Rect:new( 0, 0, 12, 17 )
 	object.onFloor = false
+
+	object.gunPosition = Vec2:new( 4, -8 )
 
     return object
 end
@@ -110,6 +115,16 @@ function Player:process( delta )
 	end
 
 	Camera:setPosition( self.position )
+
+	-- Shoot.
+
+	if RL_IsKeyPressed( Settings.keys.shoot ) then
+		local pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
+		local vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
+
+		-- Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ) ) )
+		Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, { 1, 1, 8, 8 }, self.BULLET_RANGE ) )
+	end
 end
 
 function Player:draw()

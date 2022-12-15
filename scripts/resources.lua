@@ -21,6 +21,7 @@ function Resources:init()
 	self:loadTexture( "tileset", prefix.."oga-swm-tiles-alpha.png" )
 	self:loadTexture( "player", prefix.."oga-swm-mainchar-sheet-alpha.png" )
 	self:loadTexture( "objectsAndEnemies", prefix.."oga-swm-objectsandenemies-sheet-alpha.png" )
+	self:loadTexture( "effects", prefix.."oga-swm-fx-sheet-alpha.png" )
 end
 
 function Resources:loadLocale()

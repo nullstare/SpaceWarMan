@@ -14,6 +14,8 @@ require( "scripts/room" )
 require( "scripts/camera" )
 require( "scripts/sprite" )
 require( "scripts/player" )
+require( "scripts/bullets" )
+require( "scripts/bullet" )
 
 -- Define global constants.
 TILE_SIZE = 8

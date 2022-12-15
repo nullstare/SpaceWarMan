@@ -63,7 +63,6 @@ function Room:isTileWall( pos )
 end
 
 function Room:tileCollision( entity )
-	-- local vPos = Vec2:new( entity.position + entity.velocity ) -- Future pos with current vel.
 	local vPos = entity.position + entity.velocity -- Future pos with current vel.
 	local vRect = entity.colRect:clone()
 	local tinyGap = 0.001 -- Tiny gap between collisionRect and tile to prevent getting stuck on all seams.
@@ -127,6 +126,25 @@ function Room:tileCollision( entity )
 			end
 		end
 	end
+end
+
+function Room:ifBulletCollide( bullet )
+	local tileRect = Rect:new(
+		math.floor( bullet.colRect.x / TILE_SIZE ),
+		math.floor( bullet.colRect.y / TILE_SIZE ),
+		math.floor( ( bullet.colRect.x + bullet.colRect.width ) / TILE_SIZE ),
+		math.floor( ( bullet.colRect.y + bullet.colRect.height ) / TILE_SIZE )
+	)
+
+	for x = tileRect.x, tileRect.width do
+		for y = tileRect.y, tileRect.height do
+			if self:isTileWall( Vec2:new( x, y ) ) then
+				return true
+			end
+		end
+	end
+
+	return false
 end
 
 function Room:process( delta )
