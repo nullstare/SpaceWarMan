@@ -23,12 +23,15 @@ function Resources:init()
 	self:loadTexture( "player", prefix.."oga-swm-mainchar-sheet-alpha.png" )
 	self:loadTexture( "objectsAndEnemies", prefix.."oga-swm-objectsandenemies-sheet-alpha.png" )
 	self:loadTexture( "effects", prefix.."oga-swm-fx-sheet-alpha.png" )
+	self:loadTexture( "desertBgr", prefix.."desertbg-pal00.png" )
 
 	prefix = RL_GetBasePath().."sounds/"
 
 	self:loadSound( "shoot", prefix.."shoot.wav"  )
 	self:loadSound( "jump", prefix.."jump.wav"  )
 	self:loadSound( "land", prefix.."land.wav"  )
+	self:loadSound( "hit", prefix.."hit.wav"  )
+	self:loadSound( "exlosion", prefix.."exlosion.wav"  )
 end
 
 function Resources:loadLocale()

@@ -1,10 +1,11 @@
 Room = {}
 Room.__index = Room
 
+-- Render size of screen in tiles.
+Room.TILE_RENDER_SIZE = Vec2:new( 40 + 1, 32 + 1 )
+
 function Room:new()
     local object = setmetatable( {}, self )
-
-	object.TILE_RENDER_SIZE = Vec2:new( 40 + 1, 32 + 1 )
 
 	object.data = {}
 	object.wallTiles = {}
@@ -12,6 +13,8 @@ function Room:new()
 	object.tileTexture = nil
 	object.tileTextureSize = Vec2:new( 0, 0 )
 	object.tileTextureTileSize = Vec2:new( 0, 0 )
+	object.bgrImage = nil
+	object.bgrImagePos = Vec2:new()
 
     return object
 end
@@ -21,6 +24,10 @@ function Room:load( name )
 	self.tileTextureSize = Vec2:new( RL_GetTextureSize( self.tileTexture ) )
 	self.tileTextureTileSize = Vec2:new( self.tileTextureSize.x / TILE_SIZE, self.tileTextureSize.y / TILE_SIZE )
 	self.data = dofile( RL_GetBasePath().."maps/"..name )
+
+	self.bgrImage = Resources.textures[ self.data.properties.bgrImage ]
+	self.bgrImagePos.x = self.data.properties.bgrImageX
+	self.bgrImagePos.y = self.data.properties.bgrImageY
 
 	-- Load tile data.
 
@@ -46,8 +53,16 @@ function Room:load( name )
 	for _, layer in ipairs( self.data.layers ) do
 		if layer.name == "objects" then
 			for _, object in ipairs( layer.objects ) do
+				local facing = 1
+
+				if object.properties.flipped ~= nil and object.properties.flipped then
+					facing = -1
+				end
+
 				if not Player.ready and object.name == "player" then
-					Player:init( Vec2:new( object.x + 18, object.y ) )
+					Player:init( Vec2:new( object.x + 8, object.y ) )
+				elseif object.name == "droid" then
+					Enemies:add( Droid:new( Vec2:new( object.x + 8, object.y ), facing ) )
 				end
 			end
 		end

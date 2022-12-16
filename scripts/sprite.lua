@@ -45,8 +45,10 @@ function Sprite:draw( pos )
 		dest = self.animations[ self.animation ][ self:getCurFrame() ].dest:clone()
 	end
 
-	dest.x = pos.x
-	dest.y = pos.y
+	-- dest.x = pos.x
+	-- dest.y = pos.y
+	dest.x = util.round( pos.x )
+	dest.y = util.round( pos.y )
 
 	source.width = source.width * self.HFacing
 	source.height = source.height * self.VFacing

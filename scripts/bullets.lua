@@ -1,10 +1,16 @@
 Bullets = {}
 Bullets.__index = Bullets
 
+Bullets.FREE = 0
+Bullets.HIT = {
+	ENEMIES = 0,
+	PLAYER = 1,
+}
+
+require( "scripts/bullet" )
+
 function Bullets:new()
 	local object = setmetatable( {}, self )
-
-	object.FREE = 0
 
 	object.bullets = {}
 
@@ -12,12 +18,16 @@ function Bullets:new()
 end
 
 function Bullets:add( bullet )
+	bullet.id = 1
+
 	for i, b in ipairs( self.bullets ) do
 		-- Put bullet to free slot.
 		if b == self.FREE then
 			self.bullets[i] = bullet
 			return
 		end
+
+		bullet.id = bullet.id + 1
 	end
 	-- Add new bullet.
 	table.insert( self.bullets, bullet )
@@ -26,10 +36,7 @@ end
 function Bullets:process( delta )
 	for i, bullet in ipairs( self.bullets ) do
 		if bullet ~= self.FREE and bullet.process ~= nil then
-			if not bullet:process( delta ) then
-				-- bullet = self.FREE
-				self.bullets[i] = self.FREE
-			end
+			bullet:process( delta )
 		end
 	end
 end

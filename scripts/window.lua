@@ -1,10 +1,10 @@
 Window = {}
 Window.__index = Window
 
+Window.FRAMEBUFFER_SIZE = Vec2:new( 320, 256 )
+
 function Window:new()
 	local object = setmetatable( {}, self )
-
-	object.FRAMEBUFFER_SIZE = Vec2:new( 320, 256 )
 
 	object.monitorPos = {}
 	object.monitorSize = {}
@@ -41,6 +41,7 @@ function Window:setFullscreen( fullscreen )
 		RL_SetWindowState( FLAG_WINDOW_TOPMOST )
 		RL_SetWindowSize( self.monitorSize )
 		RL_SetWindowPosition( self.monitorPos )
+		RL_HideCursor()
 	else
 		self.size = self.FRAMEBUFFER_SIZE:scale( Settings.window.scale )
 
@@ -50,6 +51,7 @@ function Window:setFullscreen( fullscreen )
 		RL_SetWindowSize( self.size )
 		RL_SetWindowPosition( { self.monitorPos.x + self.monitorSize.x / 2 - self.size.x / 2,
 							    self.monitorPos.y + self.monitorSize.y / 2 - self.size.y / 2 } )
+		RL_ShowCursor()
 	end
 
 	if Settings.window.vsync then

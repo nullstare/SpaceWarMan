@@ -5,6 +5,8 @@ function Settings:new()
 	local object = setmetatable( {}, self )
 
 	object.locale = "en"
+	object.gamepadEnabled = false
+	object.gamepad = nil
 	object.window = {
 		monitor = 0,
 		scale = 4,
@@ -17,6 +19,12 @@ function Settings:new()
 		left = KEY_LEFT,
 		jump = KEY_X,
 		shoot = KEY_C,
+	}
+	object.buttons = {
+		right = GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
+		left = GAMEPAD_BUTTON_LEFT_FACE_LEFT,
+		jump = GAMEPAD_BUTTON_RIGHT_FACE_DOWN,
+		shoot = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT,
 	}
 
     return object
@@ -33,8 +41,10 @@ function Settings:init()
 	local confFile = dofile( path )
 
 	self.locale = confFile.locale
+	self.gamepadEnabled = confFile.gamepadEnabled
 	self.window = confFile.window
 	self.keys = confFile.keys
+	self.buttons = confFile.buttons
 end
 
 function Settings:writeToFile()
