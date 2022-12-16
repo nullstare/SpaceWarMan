@@ -4,11 +4,13 @@ Player.__index = Player
 function Player:new()
 	local object = setmetatable( {}, self )
 
-	object.MAXSPEED = 1.3
+	object.MAXSPEED = 1.1
 	object.ACCELL = 8
 	object.DEACCELL = 8
 	object.GRAVITY = 6
-	object.JUMP_STR = 3
+	object.JUMP_SPEED = 2
+	object.JUMP_SUSTAIN_FORCE = 5 --3
+	object.JUMP_SUSTAIN_MAX = 1.3
 	object.WALK_ANIM_SPEED = 12
 
 	object.BULLET_SPEED = 200
@@ -22,6 +24,7 @@ function Player:new()
 	object.velocity = Vec2:new( 0, -0.01 ) -- Tiny push upwards to get out of floor if put right onto it.
 	object.colRect = Rect:new( 0, 0, 12, 17 )
 	object.onFloor = false
+	object.jumpSustain = object.JUMP_SUSTAIN_MAX
 
 	object.gunPosition = Vec2:new( 4, -8 )
 
@@ -74,9 +77,19 @@ function Player:process( delta )
 		end
 	end
 
+	-- Jump sustain.
+	if RL_IsKeyDown( Settings.keys.jump ) and 0 < self.jumpSustain and self.velocity.y < 0.0 then
+		local force = math.min( self.JUMP_SUSTAIN_FORCE * delta, self.jumpSustain )
+
+		self.velocity.y = self.velocity.y - force
+		self.jumpSustain = self.jumpSustain - force
+	end
+
+	-- Main jump.
 	if RL_IsKeyPressed( Settings.keys.jump ) and self.onFloor then
-		self.velocity.y = -self.JUMP_STR
+		self.velocity.y = -self.JUMP_SPEED
 		self.onFloor = false
+		RL_PlaySound( Resources.sounds.jump )
 	end
 
 	-- Deaccelerate.
@@ -99,7 +112,14 @@ function Player:process( delta )
 		self.onFloor = false
 	end
 
-	Room:tileCollision( self )
+	local landVel = self.velocity.y
+
+	-- Returns true if landed.
+	if Room:tileCollision( self ) and 1.5 < landVel then
+		RL_SetSoundVolume( Resources.sounds.land, 0.2 )
+		RL_PlaySound( Resources.sounds.land )
+	end
+
 	self.sprite.HFacing = self.facing
 	self:setPosition( self.position + self.velocity )
 	
@@ -122,8 +142,10 @@ function Player:process( delta )
 		local pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
 		local vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
 
-		-- Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ) ) )
 		Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, { 1, 1, 8, 8 }, self.BULLET_RANGE ) )
+		local pitch = 0.9 + math.random() * 0.2
+		RL_SetSoundPitch( Resources.sounds.shoot, pitch )
+		RL_PlaySound( Resources.sounds.shoot )
 	end
 end
 

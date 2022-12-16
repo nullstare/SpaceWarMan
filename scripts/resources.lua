@@ -6,6 +6,7 @@ function Resources:new()
 
 	object.locale = {} -- Strings.
 	object.textures = {}
+	object.sounds = {}
 
     return object
 end
@@ -22,6 +23,12 @@ function Resources:init()
 	self:loadTexture( "player", prefix.."oga-swm-mainchar-sheet-alpha.png" )
 	self:loadTexture( "objectsAndEnemies", prefix.."oga-swm-objectsandenemies-sheet-alpha.png" )
 	self:loadTexture( "effects", prefix.."oga-swm-fx-sheet-alpha.png" )
+
+	prefix = RL_GetBasePath().."sounds/"
+
+	self:loadSound( "shoot", prefix.."shoot.wav"  )
+	self:loadSound( "jump", prefix.."jump.wav"  )
+	self:loadSound( "land", prefix.."land.wav"  )
 end
 
 function Resources:loadLocale()
@@ -32,6 +39,10 @@ end
 
 function Resources:loadTexture( name, path )
 	self.textures[ name ] = RL_LoadTexture( path )
+end
+
+function Resources:loadSound( name, path )
+	self.sounds[ name ] = RL_LoadSound( path )
 end
 
 Resources = Resources:new()

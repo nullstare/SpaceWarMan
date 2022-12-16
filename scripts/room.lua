@@ -66,6 +66,7 @@ function Room:tileCollision( entity )
 	local vPos = entity.position + entity.velocity -- Future pos with current vel.
 	local vRect = entity.colRect:clone()
 	local tinyGap = 0.001 -- Tiny gap between collisionRect and tile to prevent getting stuck on all seams.
+	local landed = false
 
 	-- Move test rect to predicted position.
 	vRect.x = vPos.x - vRect.width / 2
@@ -113,7 +114,13 @@ function Room:tileCollision( entity )
 				local new_y = tileRect.height * TILE_SIZE - ( entity.colRect.y + entity.colRect.height )
 				-- math.max prevents bounce when hitting right on the corner.
 				entity.velocity.y = math.max( new_y - tinyGap, 0 )
+
+				if not entity.onFloor then
+					landed = true
+				end
+
 				entity.onFloor = true
+				entity.jumpSustain = entity.JUMP_SUSTAIN_MAX
 
 				break
 			end
@@ -126,6 +133,8 @@ function Room:tileCollision( entity )
 			end
 		end
 	end
+
+	return landed
 end
 
 function Room:ifBulletCollide( bullet )
