@@ -4,7 +4,6 @@ Player.__index = Player
 Player.MAXSPEED = 1.1
 Player.ACCELL = 8
 Player.DEACCELL = 8
-Player.GRAVITY = 6
 Player.JUMP_SPEED = 2
 Player.JUMP_SUSTAIN_FORCE = 5
 Player.JUMP_SUSTAIN_MAX = 1.3
@@ -16,6 +15,12 @@ Player.BULLET_RANGE = 70
 Player.CONTAINER_HEALTH = 5
 Player.INV_TIME = 1.0
 Player.INV_BLINK_TIME = 0.1
+
+Player.AIM = {
+	FRONT = 0,
+	UP = 1,
+	DIAGONAL = 2,
+}
 
 function Player:new()
 	local object = setmetatable( {}, self )
@@ -33,6 +38,7 @@ function Player:new()
 	object.healthContainers = 1
 	object.health = object.CONTAINER_HEALTH * object.healthContainers
 	object.invTimer = 0.0
+	object.aim = object.AIM.FRONT
 
     return object
 end
@@ -43,6 +49,8 @@ function Player:init( pos )
 	
 	-- Set animations.
 	self.sprite.animations.idle = { { source = Rect:new( 1, 1, 34, 24 ), dest = Rect:new( 0, 0, 34, 24 ) } }
+	self.sprite.animations.aimUp = { { source = Rect:new( 1, 313, 34, 24 ), dest = Rect:new( 0, 0, 34, 24 ) } }
+	self.sprite.animations.aimDiagonal = { { source = Rect:new( 1, 235, 34, 24 ), dest = Rect:new( 0, 0, 34, 24 ) } }
 	self.sprite.animations.walk = {}
 
 	for i = 0, 7 do
@@ -77,13 +85,21 @@ function Player:takeDamage( damage )
 	end
 end
 
+function Player:heal( amount )
+	self.health = math.min( self.health + 1, self.healthContainers * self.CONTAINER_HEALTH )
+end
+
 function Player:process( delta )
 	local moving = { false, false }
 	local rightDown = RL_IsKeyDown( Settings.keys.right ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.right ) )
 	local leftDown = RL_IsKeyDown( Settings.keys.left ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.left ) )
+	local upDown = RL_IsKeyDown( Settings.keys.up ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.up ) )
+	local diagonalDown = RL_IsKeyDown( Settings.keys.diagonal ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.diagonal ) )
 	local jumpPressed = RL_IsKeyPressed( Settings.keys.jump ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.jump ) )
 	local jumpDown = RL_IsKeyDown( Settings.keys.jump ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.jump ) )
 	local shootPressed = RL_IsKeyPressed( Settings.keys.shoot ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
+
+	self.aim = self.AIM.FRONT
 
 	if rightDown then
 		self.velocity.x = self.velocity.x + self.ACCELL * delta
@@ -101,6 +117,10 @@ function Player:process( delta )
 			self.facing = -1
 			self.sprite.HFlipped = true
 		end
+	elseif upDown and self.onFloor then
+		self.aim = self.AIM.UP
+	elseif diagonalDown and self.onFloor then
+		self.aim = self.AIM.DIAGONAL
 	end
 
 	-- Jump sustain.
@@ -131,7 +151,7 @@ function Player:process( delta )
 	end
 
 	self.velocity.x = util.clamp( self.velocity.x, -self.MAXSPEED, self.MAXSPEED )
-	self.velocity.y = self.velocity.y + self.GRAVITY * delta
+	self.velocity.y = self.velocity.y + Room.GRAVITY * delta
 
 	-- Drop from platform.
 	if self.onFloor and 0.5 < self.velocity.y then
@@ -156,8 +176,16 @@ function Player:process( delta )
 		self.sprite.animation = "walk"
 		self.sprite.animationPos = 2.0
 	else
-		self.sprite.animation = "idle"
-		self.animationPos = 0.0
+		if self.aim == self.AIM.UP then
+			self.sprite.animation = "aimUp"
+			self.animationPos = 0.0
+		elseif self.aim == self.AIM.DIAGONAL then
+			self.sprite.animation = "aimDiagonal"
+			self.animationPos = 0.0
+		else
+			self.sprite.animation = "idle"
+			self.animationPos = 0.0
+		end
 	end
 
 	Camera:setPosition( self.position )
@@ -165,10 +193,20 @@ function Player:process( delta )
 	-- Shoot.
 
 	if shootPressed then
-		local pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
-		local vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
+		local pos
+		local vel
 
-		-- Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, { 1, 1, 8, 8 }, self.BULLET_RANGE ) )
+		if self.aim == self.AIM.UP then
+			pos = self.position + Vec2:new( 0, self.gunPosition.y )
+			vel = Vec2:new( 0, -self.BULLET_SPEED )
+		elseif self.aim == self.AIM.DIAGONAL then
+			pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
+			vel = Vec2:new( self.facing, -1 ):normalize():scale( self.BULLET_SPEED )
+		else
+			pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
+			vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
+		end
+
 		Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
 		RL_SetSoundPitch( Resources.sounds.shoot, 0.9 + math.random() * 0.2 )
 		RL_PlaySound( Resources.sounds.shoot )
@@ -182,16 +220,11 @@ end
 
 function Player:draw()
 	if self.ready and self.sprite ~= nil then
-		self.sprite.tint = WHITE
-
-		if 0 < self.invTimer and math.floor( self.invTimer / self.INV_BLINK_TIME % 2 ) == 1 then
-			self.sprite.tint = RED
+		if self.invTimer <= 0 or math.floor( self.invTimer / self.INV_BLINK_TIME % 2 ) == 1 then
+			self.sprite:draw( self.position )
 		end
-
-		self.sprite:draw( self.position )
 	end
 
-	-- RL_DrawRectangleLines( self.colRect, RED )
 	-- RL_DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
 end
 

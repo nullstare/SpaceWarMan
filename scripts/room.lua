@@ -3,6 +3,7 @@ Room.__index = Room
 
 -- Render size of screen in tiles.
 Room.TILE_RENDER_SIZE = Vec2:new( 40 + 1, 32 + 1 )
+Room.GRAVITY = 6
 
 function Room:new()
     local object = setmetatable( {}, self )

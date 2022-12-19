@@ -21,6 +21,7 @@ function Game:process( delta )
 		Enemies:process( delta )
 		Player:process( delta )
 		Bullets:process( delta )
+		Pickups:process( delta )
 		ParticleEmitters:process( delta )
 	end
 
@@ -67,6 +68,7 @@ function Game:draw()
 		Enemies:draw()
 		Player:draw()
 		Bullets:draw()
+		Pickups:draw()
 		ParticleEmitters:draw()
 	RL_EndMode2D()
 

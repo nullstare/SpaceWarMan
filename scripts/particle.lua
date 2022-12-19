@@ -19,8 +19,6 @@ function Particle:process( delta )
 	self.position = self.position + self.velocity:scale( delta )
 	self.velocity = self.velocity + self.deltaVel:scale( delta )
 	self.lifetime = self.lifetime - delta
-
-	-- print( self.lifetime )
 end
 
 function Particle:draw()

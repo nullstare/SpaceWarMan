@@ -2,7 +2,6 @@ Droid = {}
 Droid.__index = Droid
 
 Droid.WALK_SPEED = 30
-Droid.GRAVITY = 6
 Droid.WALK_ANIM_SPEED = 12
 Droid.JUMP_SPEED = Vec2:new( 80, 3 )
 Droid.ACTIONS = {
@@ -24,10 +23,13 @@ function Droid:new( pos, facing )
 	object.position = pos
 	object.velocity = Vec2:new( 0, -0.01 ) -- Tiny push upwards to get out of floor if put right onto it.
 	object.facing = facing
+	object.onFloor = false
 	object.colRect = Rect:new( pos.x, pos.y, 10, 13 )
+
 	object.sprite = Sprite:new( Resources.textures.objectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 16 / 2, 14 ), 0.0, WHITE )
 	object.sprite.animations = object.ANIMATIONS
 	object.sprite.animation = "idle"
+
 	object.timer = 4.0
 	object.action = object.ACTIONS.WALK
 	object.health = 4
@@ -63,6 +65,12 @@ function Droid:destroy()
 			lifetime = { min = 0.15, max = 0.25 },
 		}
 	) )
+
+	local dropRoll = math.random()
+
+	if dropRoll < 0.3 then
+		Pickups:add( Health:new( self.position, Vec2:new() ) )
+	end
 end
 
 function Droid:takeDamage( damage )
@@ -104,7 +112,7 @@ function Droid:process( delta )
 		end
 	end
 	
-	self.velocity.y = self.velocity.y + self.GRAVITY * delta
+	self.velocity.y = self.velocity.y + Room.GRAVITY * delta
 
 	-- Drop from platform.
 	if self.onFloor and 0.5 < self.velocity.y then
@@ -148,6 +156,5 @@ function Droid:draw()
 		self.sprite.tint = WHITE
 	end
 
-	-- RL_DrawRectangleLines( self.colRect, RED )
 	-- RL_DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
 end

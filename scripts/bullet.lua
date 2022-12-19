@@ -30,7 +30,7 @@ function Bullet:spawnParticles( source )
 			count = 4,
 			interval = 0.03,
 			pos = { min = Vec2:new( -2, -2 ), max = Vec2:new( 2, 2 ) },
-			vel = { min = Vec2:new( -30, -30 ), max = Vec2:new( 30, 30 ) },
+			vel = { min = Vec2:new( -self.velocity.x * 0.1, -30 ), max = Vec2:new( -self.velocity.x * 0.2, 30 ) },
 			deltaVel = { min = Vec2:new( 0, 80 ), max = Vec2:new( 0, 100 ) },
 			lifetime = { min = 0.1, max = 0.4 },
 		}
@@ -68,6 +68,4 @@ function Bullet:draw()
 	if self.sprite ~= nil then
 		self.sprite:draw( self.position )
 	end
-
-	-- RL_DrawRectangleLines( self.colRect, RED )
 end
