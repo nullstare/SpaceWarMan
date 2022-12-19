@@ -21,6 +21,7 @@ function Game:process( delta )
 		Enemies:process( delta )
 		Player:process( delta )
 		Bullets:process( delta )
+		ParticleEmitters:process( delta )
 	end
 
 	if Settings.gamepadEnabled and Settings.gamepad == nil and RL_IsGamepadAvailable( 0 ) then
@@ -66,6 +67,7 @@ function Game:draw()
 		Enemies:draw()
 		Player:draw()
 		Bullets:draw()
+		ParticleEmitters:draw()
 	RL_EndMode2D()
 
 	self:drawUi()

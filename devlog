@@ -1,5 +1,9 @@
 current {
+	* Pickups.
 }
 
 backlog {
+	* Change room.
+	* Mainmenu.
+	* Inventory.
 }

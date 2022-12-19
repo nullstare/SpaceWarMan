@@ -4,8 +4,8 @@ return {
 	window = {
 		monitor = 0,
 		scale = 5,
-		-- fullscreen = false,
-		fullscreen = true,
+		fullscreen = false,
+		-- fullscreen = true,
 		vsync = true,
 	},
 	keys = {

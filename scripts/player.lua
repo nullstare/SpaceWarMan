@@ -26,7 +26,7 @@ function Player:new()
 
 	object.facing = 1
 	object.velocity = Vec2:new( 0, -0.01 ) -- Tiny push upwards to get out of floor if put right onto it.
-	object.colRect = Rect:new( 0, 0, 12, 15 )
+	object.colRect = Rect:new( 0, 0, 10, 15 )
 	object.onFloor = false
 	object.jumpSustain = object.JUMP_SUSTAIN_MAX
 	object.gunPosition = Vec2:new( 4, -8 )
@@ -39,7 +39,7 @@ end
 
 function Player:init( pos )
 	self:setPosition( pos )
-	self.sprite = Sprite:new( Resources.textures.player, nil, nil, { 18, 24 }, 0.0, WHITE )
+	self.sprite = Sprite:new( Resources.textures.player, Rect:new(), Rect:new(), Vec2:new( 17, 24 ), 0.0, WHITE )
 	
 	-- Set animations.
 	self.sprite.animations.idle = { { source = Rect:new( 1, 1, 34, 24 ), dest = Rect:new( 0, 0, 34, 24 ) } }
@@ -69,7 +69,7 @@ function Player:takeDamage( damage )
 
 	self.health = self.health - damage
 	self.invTimer = self.INV_TIME
-	RL_PlaySound( Resources.sounds.hit )
+	RL_PlaySound( Resources.sounds.hit3 )
 
 	if self.health <= 0 then
 		self.ready = false
@@ -168,7 +168,8 @@ function Player:process( delta )
 		local pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
 		local vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
 
-		Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, { 1, 1, 8, 8 }, self.BULLET_RANGE ) )
+		-- Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, { 1, 1, 8, 8 }, self.BULLET_RANGE ) )
+		Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
 		RL_SetSoundPitch( Resources.sounds.shoot, 0.9 + math.random() * 0.2 )
 		RL_PlaySound( Resources.sounds.shoot )
 	end
@@ -191,6 +192,7 @@ function Player:draw()
 	end
 
 	-- RL_DrawRectangleLines( self.colRect, RED )
+	-- RL_DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
 end
 
 Player = Player:new()

@@ -31,6 +31,8 @@ function Resources:init()
 	self:loadSound( "jump", prefix.."jump.wav"  )
 	self:loadSound( "land", prefix.."land.wav"  )
 	self:loadSound( "hit", prefix.."hit.wav"  )
+	self:loadSound( "hit2", prefix.."hit2.wav"  )
+	self:loadSound( "hit3", prefix.."hit3.wav"  )
 	self:loadSound( "exlosion", prefix.."exlosion.wav"  )
 end
 

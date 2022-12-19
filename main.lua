@@ -16,6 +16,7 @@ require( "scripts/sprite" )
 require( "scripts/player" )
 require( "scripts/bullets" )
 require( "scripts/enemies" )
+require( "scripts/particle_emitters" )
 
 -- Define global constants.
 TILE_SIZE = 8

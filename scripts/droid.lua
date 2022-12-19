@@ -21,11 +21,11 @@ function Droid:new( pos, facing )
 	local object = setmetatable( {}, self )
 
 	object.id = 1
-	object.position = pos:clone()
+	object.position = pos
 	object.velocity = Vec2:new( 0, -0.01 ) -- Tiny push upwards to get out of floor if put right onto it.
 	object.facing = facing
-	object.colRect = Rect:new( pos.x, pos.y, 12, 14 )
-	object.sprite = Sprite:new( Resources.textures.objectsAndEnemies, nil, nil, { 16 / 2, 14 }, 0.0, WHITE )
+	object.colRect = Rect:new( pos.x, pos.y, 10, 13 )
+	object.sprite = Sprite:new( Resources.textures.objectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 16 / 2, 14 ), 0.0, WHITE )
 	object.sprite.animations = object.ANIMATIONS
 	object.sprite.animation = "idle"
 	object.timer = 4.0
@@ -48,6 +48,21 @@ end
 function Droid:destroy()
 	Enemies.enemies[ self.id ] = Enemies.FREE
 	RL_PlaySound( Resources.sounds.exlosion )
+
+	ParticleEmitters:add( ParticleEmitter:new(
+		self.position:clone(),
+		Resources.textures.effects,
+		Rect:new( 2, 36, 10, 10 ),
+		WHITE,
+		{ -- Emit.
+			count = 8,
+			interval = 0.01,
+			pos = { min = Vec2:new( -6, -16 ), max = Vec2:new( 6, -1 ) },
+			vel = { min = Vec2:new( -50, -50 ), max = Vec2:new( 50, 50 ) },
+			deltaVel = { min = Vec2:new( 0, -40 ), max = Vec2:new( 0, -30 ) },
+			lifetime = { min = 0.15, max = 0.25 },
+		}
+	) )
 end
 
 function Droid:takeDamage( damage )
@@ -134,4 +149,5 @@ function Droid:draw()
 	end
 
 	-- RL_DrawRectangleLines( self.colRect, RED )
+	-- RL_DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
 end

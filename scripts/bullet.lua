@@ -1,15 +1,15 @@
 Bullet = {}
 Bullet.__index = Bullet
 
-function Bullet:new( pos, vel, tex, source, range )
+function Bullet:new( pos, vel, tex, source, origin, range )
 	local object = setmetatable( {}, self )
 
 	object.id = 1
-	object.position = pos:clone()
-	object.velocity = vel:clone()
-	object.sprite = Sprite:new( Resources.textures.effects, source, { pos.x, pos.y, source[3], source[4] }, { 4, 4 }, 0.0, WHITE )
+	object.position = pos
+	object.velocity = vel
+	object.sprite = Sprite:new( Resources.textures.effects, source, Rect:new( pos.x, pos.y, source.width, source.height ), origin, 0.0, WHITE )
 	object.range = range
-	object.colRect = Rect:new( pos.x + 1, pos.y + 1, source[3] - 2, source[4] - 2 )
+	object.colRect = Rect:new( pos.x + 1, pos.y + 1, source.width - 2, source.height - 2 )
 	object.damage = 1
 	object.hit = Bullets.HIT.ENEMIES
 
@@ -20,6 +20,23 @@ function Bullet:destroy()
 	Bullets.bullets[ self.id ] = Bullets.FREE
 end
 
+function Bullet:spawnParticles( source )
+	ParticleEmitters:add( ParticleEmitter:new(
+		self.position:clone(),
+		Resources.textures.effects,
+		source,
+		WHITE,
+		{ -- Emit.
+			count = 4,
+			interval = 0.03,
+			pos = { min = Vec2:new( -2, -2 ), max = Vec2:new( 2, 2 ) },
+			vel = { min = Vec2:new( -30, -30 ), max = Vec2:new( 30, 30 ) },
+			deltaVel = { min = Vec2:new( 0, 80 ), max = Vec2:new( 0, 100 ) },
+			lifetime = { min = 0.1, max = 0.4 },
+		}
+	) )
+end
+
 function Bullet:process( delta )
 	local range = self.velocity:scale( delta )
 
@@ -28,17 +45,20 @@ function Bullet:process( delta )
 	self.colRect.y = self.position.y - self.colRect.height / 2 + 1
 	self.range = self.range - range:length()
 
-	if self.range <= 0.0 or Room:ifBulletCollide( self ) then
+	if self.range <= 0.0 then
 		self:destroy()
-	end
-
-	if self.hit == Bullets.HIT.ENEMIES then
+	elseif Room:ifBulletCollide( self ) then
+		self:destroy()
+		self:spawnParticles( Rect:new( 3, 2, 1, 1 ) )
+	elseif self.hit == Bullets.HIT.ENEMIES then
 		for _, enemy in ipairs( Enemies.enemies ) do
 			if enemy ~= Bullets.FREE and RL_CheckCollisionRecs( self.colRect, enemy.colRect ) then
 				self:destroy()
 				enemy:takeDamage( self.damage )
 				RL_SetSoundPitch( Resources.sounds.hit, 0.7 + math.random() * 0.4 )
 				RL_PlaySound( Resources.sounds.hit )
+
+				self:spawnParticles( Rect:new( 4, 25, 1, 1 ) )
 			end
 		end
 	end

@@ -5,11 +5,11 @@ function Sprite:new( texture, source, dest, origin, rotation, tint )
 	local object = setmetatable( {}, self )
 
 	object.texture = texture
-	object.source = Rect:new( source )
-	object.dest = Rect:new( dest )
-	object.origin = Vec2:new( origin )
+	object.source = source
+	object.dest = dest
+	object.origin = origin
 	object.rotation = rotation
-	object.tint = Color:new( tint )
+	object.tint = tint
 
 	object.animations = {}
 	object.animation = nil
@@ -45,8 +45,6 @@ function Sprite:draw( pos )
 		dest = self.animations[ self.animation ][ self:getCurFrame() ].dest:clone()
 	end
 
-	-- dest.x = pos.x
-	-- dest.y = pos.y
 	dest.x = util.round( pos.x )
 	dest.y = util.round( pos.y )
 
