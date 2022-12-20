@@ -11,30 +11,44 @@ function Room:new()
 	object.data = {}
 	object.wallTiles = {}
 	object.bgrTiles = {}
+	object.bgrTiles2 = {}
 	object.tileTexture = nil
 	object.tileTextureSize = Vec2:new( 0, 0 )
 	object.tileTextureTileSize = Vec2:new( 0, 0 )
 	object.bgrImage = nil
 	object.bgrImagePos = Vec2:new()
+	object.transitions = { left = nil, right = nil, up = nil, down = nil } -- Correspond to Room.TRANSITION.
 
     return object
 end
 
 function Room:load( name )
+	self:clear()
+
 	self.tileTexture = Resources.textures.tileset
 	self.tileTextureSize = Vec2:new( RL_GetTextureSize( self.tileTexture ) )
 	self.tileTextureTileSize = Vec2:new( self.tileTextureSize.x / TILE_SIZE, self.tileTextureSize.y / TILE_SIZE )
 	self.data = dofile( RL_GetBasePath().."maps/"..name )
 
+	-- Set properties.
+
 	self.bgrImage = Resources.textures[ self.data.properties.bgrImage ]
 	self.bgrImagePos.x = self.data.properties.bgrImageX
 	self.bgrImagePos.y = self.data.properties.bgrImageY
+
+	-- Transitions.
+
+	self.transitions.left = self.data.properties.roomLeft
+	self.transitions.right = self.data.properties.roomRight
+	self.transitions.up = self.data.properties.roomUp
+	self.transitions.down = self.data.properties.roomDown
 
 	-- Load tile data.
 
 	for x = 1, self.data.width do
 		table.insert( self.wallTiles, {} )
 		table.insert( self.bgrTiles, {} )
+		table.insert( self.bgrTiles2, {} )
 		
 		for y = 1, self.data.height do
 			local i = (x-1) + (y-1) * self.data.width + 1
@@ -44,6 +58,8 @@ function Room:load( name )
 					table.insert( self.wallTiles[x], layer.data[i] )
 				elseif layer.name == "background" then
 					table.insert( self.bgrTiles[x], layer.data[i] )
+				elseif layer.name == "background2" then
+					table.insert( self.bgrTiles2[x], layer.data[i] )
 				end
 			end
 		end
@@ -60,13 +76,46 @@ function Room:load( name )
 					facing = -1
 				end
 
-				if not Player.ready and object.name == "player" then
+				if not Player.inited and object.name == "player" then
 					Player:init( Vec2:new( object.x + 8, object.y ) )
 				elseif object.name == "droid" then
 					Enemies:add( Droid:new( Vec2:new( object.x + 8, object.y ), facing ) )
+				elseif object.name == "energyTank" and Player.collectedEnergyTanks[ object.properties.name ] == nil then
+					Pickups:add( EnergyTank:new( Vec2:new( object.x, object.y ), object.properties.name ) )
+				elseif object.name == "doubleJump" and not Player.doubleJump then
+					Pickups:add( DoubleJump:new( Vec2:new( object.x, object.y ) ) )
 				end
 			end
 		end
+	end
+
+	Game.run = true
+end
+
+function Room:clear()
+	self.data = {}
+	self.wallTiles = {}
+	self.bgrTiles = {}
+	self.bgrTiles2 = {}
+
+	Bullets.bullets = {}
+	Enemies.enemies = {}
+	Pickups.pickups = {}
+end
+
+function Room:transition( direction )
+	if self.transitions[ direction ] ~= nil then
+		Game.run = false
+		Room:load( self.transitions[ direction ] )
+
+		if direction == "right" then
+			Player:setPosition( Vec2:new( 8, Player.position.y ) )
+		elseif direction == "left" then
+			Player:setPosition( Vec2:new( self.data.width * TILE_SIZE - 8, Player.position.y ) )
+		end
+
+		-- Set camera immediately to player position to prevent it beeing one frame in wrong place.
+		Camera:setPosition( Player.position )
 	end
 end
 
@@ -136,7 +185,6 @@ function Room:tileCollision( entity )
 				end
 
 				entity.onFloor = true
-				entity.jumpSustain = entity.JUMP_SUSTAIN_MAX
 
 				break
 			end
@@ -203,6 +251,7 @@ function Room:drawTilemap( tilemap )
 end
 
 function Room:draw()
+	self:drawTilemap( self.bgrTiles2 )
 	self:drawTilemap( self.bgrTiles )
 	self:drawTilemap( self.wallTiles )
 end

@@ -4,6 +4,8 @@ Pickups.__index = Pickups
 Pickups.FREE = 0
 
 require( "scripts/health" )
+require( "scripts/energy_tank" )
+require( "scripts/double_jump" )
 
 function Pickups:new()
 	local object = setmetatable( {}, self )

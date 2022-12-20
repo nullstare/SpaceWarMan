@@ -66,7 +66,7 @@ function Health:process( delta )
 		Player:heal( 1 )
 	end
 
-	self.sprite:playAnimation( Health.ANIM_SPEED * delta )
+	self.sprite:playAnimation( self.ANIM_SPEED * delta )
 
 	self.lifetime = self.lifetime - delta
 

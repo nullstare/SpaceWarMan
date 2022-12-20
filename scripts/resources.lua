@@ -35,6 +35,7 @@ function Resources:init()
 	self:loadSound( "hit3", prefix.."hit3.wav"  )
 	self:loadSound( "exlosion", prefix.."exlosion.wav"  )
 	self:loadSound( "pickup", prefix.."pickup.wav"  )
+	self:loadSound( "powerUp", prefix.."powerUp.wav"  )
 end
 
 function Resources:loadLocale()

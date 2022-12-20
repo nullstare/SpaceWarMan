@@ -19,9 +19,11 @@ end
 function Droid:new( pos, facing )
 	local object = setmetatable( {}, self )
 
+	pos.y = pos.y - 0.1 -- Tiny gap upwards to get out of floor if put right onto it.
+
 	object.id = 1
 	object.position = pos
-	object.velocity = Vec2:new( 0, -0.01 ) -- Tiny push upwards to get out of floor if put right onto it.
+	object.velocity = Vec2:new()
 	object.facing = facing
 	object.onFloor = false
 	object.colRect = Rect:new( pos.x, pos.y, 10, 13 )
@@ -130,6 +132,16 @@ function Droid:process( delta )
 	elseif not self.onFloor then
 		self.sprite.animation = "walk"
 		self.sprite.animationPos = 0.0
+	end
+
+	-- On map edge.
+
+	if self.position.x < 8 then
+		self.position.x = 8
+		self.facing = 1
+	elseif Room.data.width * TILE_SIZE - 8 < self.position.x then
+		self.position.x = Room.data.width * TILE_SIZE - 8
+		self.facing = -1
 	end
 
 	Room:tileCollision( self )
