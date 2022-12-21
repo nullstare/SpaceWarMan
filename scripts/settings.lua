@@ -5,7 +5,6 @@ function Settings:new()
 	local object = setmetatable( {}, self )
 
 	object.locale = "en"
-	object.gamepadEnabled = false
 	object.gamepad = nil
 	object.window = {
 		monitor = 0,
@@ -18,17 +17,21 @@ function Settings:new()
 		right = KEY_RIGHT,
 		left = KEY_LEFT,
 		up = KEY_UP,
+		down = KEY_DOWN,
 		diagonal = KEY_LEFT_SHIFT,
 		jump = KEY_X,
 		shoot = KEY_C,
+		menu = KEY_ESCAPE,
 	}
 	object.buttons = {
 		right = GAMEPAD_BUTTON_LEFT_FACE_RIGHT,
 		left = GAMEPAD_BUTTON_LEFT_FACE_LEFT,
 		up = GAMEPAD_BUTTON_LEFT_FACE_UP,
+		down = GAMEPAD_BUTTON_LEFT_FACE_DOWN,
 		diagonal = GAMEPAD_BUTTON_LEFT_TRIGGER_1,
 		jump = GAMEPAD_BUTTON_RIGHT_FACE_DOWN,
 		shoot = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT,
+		menu = GAMEPAD_BUTTON_MIDDLE_RIGHT,
 	}
 
     return object
@@ -45,7 +48,6 @@ function Settings:init()
 	local confFile = dofile( path )
 
 	self.locale = confFile.locale
-	self.gamepadEnabled = confFile.gamepadEnabled
 	self.window = confFile.window
 	self.keys = confFile.keys
 	self.buttons = confFile.buttons
@@ -64,13 +66,23 @@ function Settings:writeToFile()
 	file:write( "fullscreen="..tostring( Settings.window.fullscreen )..",\n" )
 	file:write( "vsync="..tostring( Settings.window.vsync )..",\n" )
 	
-	file:write( "},\n},\n" )
+	-- file:write( "},\n},\n" )
+	file:write( "},\n" )
 
 	-- Keys.
 	file:write( "keys={\n" )
 
 	for name, key in pairs( Settings.keys ) do
 		file:write( name.."="..key..",\n" )
+	end
+
+	file:write( "},\n" )
+
+	-- Buttons.
+	file:write( "buttons={\n" )
+
+	for name, button in pairs( Settings.buttons ) do
+		file:write( name.."="..button..",\n" )
 	end
 
 	file:write( "},\n" )

@@ -10,7 +10,7 @@ return {
   tilewidth = 8,
   tileheight = 8,
   nextlayerid = 9,
-  nextobjectid = 29,
+  nextobjectid = 31,
   properties = {
     ["bgrImage"] = "desertBgr",
     ["bgrImageX"] = 0,

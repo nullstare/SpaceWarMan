@@ -36,7 +36,7 @@ function EnergyTank:process( delta )
 		Player.health = Player.health + Player.TANK_HEALTH
 		self:destroy()
 		RL_PlaySound( Resources.sounds.powerUp )
-		Game:setMessage( Resources.locale.energyTankAcquired )
+		UI:setMessage( Resources.locale.energyTankAcquired )
 	end
 
 	self.sprite:playAnimation( self.ANIM_SPEED * delta )

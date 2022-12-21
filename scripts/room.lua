@@ -2,12 +2,14 @@ Room = {}
 Room.__index = Room
 
 -- Render size of screen in tiles.
-Room.TILE_RENDER_SIZE = Vec2:new( 40 + 1, 32 + 1 )
+-- Room.TILE_RENDER_SIZE = Vec2:new( 40 + 1, 32 + 1 )
+Room.TILE_RENDER_SIZE = Vec2:new( math.ceil( Window.FRAMEBUFFER_SIZE.x / TILE_SIZE ) + 1, math.ceil( Window.FRAMEBUFFER_SIZE.y / TILE_SIZE ) + 1 )
 Room.GRAVITY = 6
 
 function Room:new()
     local object = setmetatable( {}, self )
 
+	object.loaded = false
 	object.data = {}
 	object.wallTiles = {}
 	object.bgrTiles = {}
@@ -90,6 +92,7 @@ function Room:load( name )
 	end
 
 	Game.run = true
+	self.loaded = true
 end
 
 function Room:clear()
@@ -99,9 +102,6 @@ function Room:clear()
 	self.bgrTiles2 = {}
 
 	Objects:clear()
-	-- Bullets.bullets = {}
-	-- Enemies.enemies = {}
-	-- Pickups.pickups = {}
 end
 
 function Room:transition( direction )

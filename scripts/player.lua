@@ -127,6 +127,7 @@ function Player:process( delta )
 	local jumpDown = RL_IsKeyDown( Settings.keys.jump ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.jump ) )
 	local shootPressed = RL_IsKeyPressed( Settings.keys.shoot ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
 
+	-- Default aim to front.
 	self.aim = self.AIM.FRONT
 
 	local accell = self.ACCELL

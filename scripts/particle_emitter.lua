@@ -30,19 +30,8 @@ function ParticleEmitter:new( position, texture, source, tint, emit )
     return object
 end
 
+-- We will only add since we will not support continuous emitting and emitter lifetime is short.
 function ParticleEmitter:add( particle )
-	-- particle.id = 1
-
-	-- for i, b in ipairs( self.particles ) do
-	-- 	-- Put particle to free slot.
-	-- 	if b == self.FREE then
-	-- 		self.ParticleEmitter[i] = particle
-	-- 		return
-	-- 	end
-
-	-- 	particle.id = particle.id + 1
-	-- end
-	-- Add new particle.
 	table.insert( self.particles, particle )
 end
 
@@ -98,8 +87,5 @@ function ParticleEmitter:draw()
 		if 0 < particle.lifetime then
 			particle:draw()
 		end
-		-- if particle ~= self.FREE and particle.draw ~= nil then
-			-- particle:draw()
-		-- end
 	end
 end

@@ -6,6 +6,7 @@ Window.FRAMEBUFFER_SIZE = Vec2:new( 320, 256 )
 function Window:new()
 	local object = setmetatable( {}, self )
 
+	object.monitorCount = RL_GetMonitorCount()
 	object.monitorPos = {}
 	object.monitorSize = {}
 	object.size = {}
@@ -24,6 +25,7 @@ function Window:init()
 	self.framebuffer = RL_LoadRenderTexture( self.FRAMEBUFFER_SIZE )
 	self:setFullscreen( Settings.window.fullscreen )
 	self:adjustFramebuffer()
+	self:updateVSync()
 end
 
 function Window:adjustFramebuffer()
@@ -53,7 +55,9 @@ function Window:setFullscreen( fullscreen )
 							    self.monitorPos.y + self.monitorSize.y / 2 - self.size.y / 2 } )
 		RL_ShowCursor()
 	end
+end
 
+function Window:updateVSync()
 	if Settings.window.vsync then
 		RL_SetWindowState( FLAG_VSYNC_HINT )
 	end
@@ -70,6 +74,7 @@ function Window:draw()
 	RL_BeginTextureMode( self.framebuffer )
 		RL_ClearBackground( BLACK )
 		Game:draw()
+		Menu:draw()
 	RL_EndTextureMode()
 		
 	RL_ClearBackground( BLACK )

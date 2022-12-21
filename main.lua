@@ -6,30 +6,34 @@ Vec2 = require( "vector2" )
 Rect = require( "rectangle" )
 Color = require( "color" )
 
+-- Define global constants.
+TILE_SIZE = 8
+
 require( "scripts/settings" )
 require( "scripts/resources" )
 require( "scripts/window" )
 require( "scripts/game" )
+require( "scripts/ui" )
+require( "scripts/menu" )
 require( "scripts/room" )
 require( "scripts/camera" )
 require( "scripts/sprite" )
 require( "scripts/player" )
 require( "scripts/objects" )
 
--- Define global constants.
-TILE_SIZE = 8
-
 function init()
 	Settings:init()
 	Resources:init()
 	Window:init()
+	Menu:init()
 
-	Game:start()
+	-- Game:start()
 end
 
 function process( delta )
 	Window:process( delta )
 	Game:process( delta )
+	Menu:process( delta )
 end
 
 function draw()

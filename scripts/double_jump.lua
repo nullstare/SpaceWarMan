@@ -32,7 +32,7 @@ function DoubleJump:process( delta )
 		Player.doubleJump = true
 		self:destroy()
 		RL_PlaySound( Resources.sounds.powerUp )
-		Game:setMessage( Resources.locale.doubleJumpAcquired )
+		UI:setMessage( Resources.locale.doubleJumpAcquired )
 	end
 
 	self.sprite:playAnimation( self.ANIM_SPEED * delta )

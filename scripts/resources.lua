@@ -18,7 +18,6 @@ function Resources:init()
 
 	local prefix = RL_GetBasePath().."images/"
 
-	self:loadTexture( "mockup", prefix.."mockup.png" )
 	self:loadTexture( "tileset", prefix.."oga-swm-tiles-alpha.png" )
 	self:loadTexture( "player", prefix.."oga-swm-mainchar-sheet-alpha.png" )
 	self:loadTexture( "objectsAndEnemies", prefix.."oga-swm-objectsandenemies-sheet-alpha.png" )
