@@ -2,7 +2,5 @@ current {
 }
 
 backlog {
-	* Change room.
 	* Mainmenu.
-	* Inventory.
 }

@@ -93,7 +93,7 @@ end
 function Player:destroy()
 	RL_PlaySound( Resources.sounds.exlosion )
 
-	ParticleEmitters:add( ParticleEmitter:new(
+	Objects:add( Objects.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		Rect:new( 2, 36, 10, 10 ),
@@ -267,7 +267,8 @@ function Player:process( delta )
 			vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
 		end
 
-		Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
+		-- Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
+		Objects:add( Objects.bullets, Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
 		RL_SetSoundPitch( Resources.sounds.shoot, 0.9 + math.random() * 0.2 )
 		RL_PlaySound( Resources.sounds.shoot )
 	end

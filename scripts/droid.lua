@@ -50,10 +50,10 @@ function Droid:setPosition( pos )
 end
 
 function Droid:destroy()
-	Enemies.enemies[ self.id ] = Enemies.FREE
+	Objects.enemies[ self.id ] = Objects.FREE
 	RL_PlaySound( Resources.sounds.exlosion )
 
-	ParticleEmitters:add( ParticleEmitter:new(
+	Objects:add( Objects.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		Rect:new( 2, 36, 10, 10 ),
@@ -71,7 +71,7 @@ function Droid:destroy()
 	local dropRoll = math.random()
 
 	if dropRoll < 0.3 then
-		Pickups:add( Health:new( self.position, Vec2:new() ) )
+		Objects:add( Objects.pickups, Health:new( self.position, Vec2:new() ) )
 	end
 end
 

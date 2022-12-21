@@ -1,5 +1,3 @@
-print( RL_GetBasePath() )
-
 package.path = package.path..";"..RL_GetBasePath().."libs/?.lua"
 package.path = package.path..";"..RL_GetBasePath().."?.lua"
 
@@ -16,10 +14,7 @@ require( "scripts/room" )
 require( "scripts/camera" )
 require( "scripts/sprite" )
 require( "scripts/player" )
-require( "scripts/bullets" )
-require( "scripts/enemies" )
-require( "scripts/particle_emitters" )
-require( "scripts/pickups" )
+require( "scripts/objects" )
 
 -- Define global constants.
 TILE_SIZE = 8

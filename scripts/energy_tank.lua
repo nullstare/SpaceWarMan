@@ -26,7 +26,7 @@ function EnergyTank:new( pos, name )
 end
 
 function EnergyTank:destroy()
-	Pickups.pickups[ self.id ] = Pickups.FREE
+	Objects.pickups[ self.id ] = Objects.FREE
 end
 
 function EnergyTank:process( delta )

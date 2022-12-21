@@ -29,11 +29,8 @@ end
 
 function Game:process( delta )
 	if self.run then
-		Enemies:process( delta )
 		Player:process( delta )
-		Bullets:process( delta )
-		Pickups:process( delta )
-		ParticleEmitters:process( delta )
+		Objects:process( delta )
 	end
 
 	if Settings.gamepadEnabled and Settings.gamepad == nil and RL_IsGamepadAvailable( 0 ) then
@@ -97,11 +94,8 @@ function Game:draw()
 
 	RL_BeginMode2D( Camera.camera )
 		Room:draw()
-		Enemies:draw()
 		Player:draw()
-		Bullets:draw()
-		Pickups:draw()
-		ParticleEmitters:draw()
+		Objects:draw()
 	RL_EndMode2D()
 
 	self:drawUi()

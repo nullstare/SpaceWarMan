@@ -39,7 +39,7 @@ function Health:setPosition( pos )
 end
 
 function Health:destroy()
-	Pickups.pickups[ self.id ] = Pickups.FREE
+	Objects.pickups[ self.id ] = Objects.FREE
 end
 
 function Health:process( delta )

@@ -16,7 +16,7 @@ return {
     ["bgrImageX"] = 0,
     ["bgrImageY"] = -40,
     ["roomLeft"] = "start.lua",
-    ["roomRight"] = "cave.lua"
+    ["roomRight"] = "start.lua"
   },
   tilesets = {
     {

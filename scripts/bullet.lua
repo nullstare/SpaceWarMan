@@ -11,17 +11,17 @@ function Bullet:new( pos, vel, tex, source, origin, range )
 	object.range = range
 	object.colRect = Rect:new( pos.x + 1, pos.y + 1, source.width - 2, source.height - 2 )
 	object.damage = 1
-	object.hit = Bullets.HIT.ENEMIES
+	object.hit = Objects.HIT.ENEMIES
 
     return object
 end
 
 function Bullet:destroy()
-	Bullets.bullets[ self.id ] = Bullets.FREE
+	Objects.bullets[ self.id ] = Objects.FREE
 end
 
 function Bullet:spawnParticles( source )
-	ParticleEmitters:add( ParticleEmitter:new(
+	Objects:add( Objects.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		source,
@@ -50,9 +50,9 @@ function Bullet:process( delta )
 	elseif Room:ifBulletCollide( self ) then
 		self:destroy()
 		self:spawnParticles( Rect:new( 3, 2, 1, 1 ) )
-	elseif self.hit == Bullets.HIT.ENEMIES then
-		for _, enemy in ipairs( Enemies.enemies ) do
-			if enemy ~= Bullets.FREE and RL_CheckCollisionRecs( self.colRect, enemy.colRect ) then
+	elseif self.hit == Objects.HIT.ENEMIES then
+		for _, enemy in ipairs( Objects.enemies ) do
+			if enemy ~= Objects.FREE and RL_CheckCollisionRecs( self.colRect, enemy.colRect ) then
 				self:destroy()
 				enemy:takeDamage( self.damage )
 				RL_SetSoundPitch( Resources.sounds.hit, 0.7 + math.random() * 0.4 )

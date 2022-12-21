@@ -90,7 +90,7 @@ function ParticleEmitter:process( delta )
 end
 
 function ParticleEmitter:destroy()
-	ParticleEmitters.emitters[ self.id ] = ParticleEmitters.FREE
+	Objects.emitters[ self.id ] = Objects.FREE
 end
 
 function ParticleEmitter:draw()

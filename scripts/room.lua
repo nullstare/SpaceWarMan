@@ -79,11 +79,11 @@ function Room:load( name )
 				if not Player.inited and object.name == "player" then
 					Player:init( Vec2:new( object.x + 8, object.y ) )
 				elseif object.name == "droid" then
-					Enemies:add( Droid:new( Vec2:new( object.x + 8, object.y ), facing ) )
+					Objects:add( Objects.enemies, Droid:new( Vec2:new( object.x + 8, object.y ), facing ) )
 				elseif object.name == "energyTank" and Player.collectedEnergyTanks[ object.properties.name ] == nil then
-					Pickups:add( EnergyTank:new( Vec2:new( object.x, object.y ), object.properties.name ) )
+					Objects:add( Objects.pickups, EnergyTank:new( Vec2:new( object.x, object.y ), object.properties.name ) )
 				elseif object.name == "doubleJump" and not Player.doubleJump then
-					Pickups:add( DoubleJump:new( Vec2:new( object.x, object.y ) ) )
+					Objects:add( Objects.pickups, DoubleJump:new( Vec2:new( object.x, object.y ) ) )
 				end
 			end
 		end
@@ -98,9 +98,10 @@ function Room:clear()
 	self.bgrTiles = {}
 	self.bgrTiles2 = {}
 
-	Bullets.bullets = {}
-	Enemies.enemies = {}
-	Pickups.pickups = {}
+	Objects:clear()
+	-- Bullets.bullets = {}
+	-- Enemies.enemies = {}
+	-- Pickups.pickups = {}
 end
 
 function Room:transition( direction )

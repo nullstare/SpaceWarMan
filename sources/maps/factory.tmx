@@ -8,7 +8,7 @@
   <property name="bgrImageX" type="int" value="0"/>
   <property name="bgrImageY" type="int" value="-40"/>
   <property name="roomLeft" value="start.lua"/>
-  <property name="roomRight" value="cave.lua"/>
+  <property name="roomRight" value="start.lua"/>
  </properties>
  <tileset firstgid="1" source="tiles.tsx"/>
  <tileset firstgid="793" source="actors.tsx"/>
