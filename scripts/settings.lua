@@ -13,7 +13,7 @@ function Settings:new()
 		vsync = true,
 	}
 	object.keys = {
-		exit = KEY_ESCAPE,
+		exit = KEY_F8,
 		right = KEY_RIGHT,
 		left = KEY_LEFT,
 		up = KEY_UP,
@@ -29,8 +29,8 @@ function Settings:new()
 		up = GAMEPAD_BUTTON_LEFT_FACE_UP,
 		down = GAMEPAD_BUTTON_LEFT_FACE_DOWN,
 		diagonal = GAMEPAD_BUTTON_LEFT_TRIGGER_1,
-		jump = GAMEPAD_BUTTON_RIGHT_FACE_DOWN,
-		shoot = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT,
+		jump = GAMEPAD_BUTTON_RIGHT_FACE_RIGHT,
+		shoot = GAMEPAD_BUTTON_RIGHT_FACE_DOWN,
 		menu = GAMEPAD_BUTTON_MIDDLE_RIGHT,
 	}
 
@@ -45,6 +45,13 @@ function Settings:init()
 		return
 	end
 
+	RL_SetTargetFPS( 60 )
+	-- RL_SetTargetFPS( 50 )
+	-- RL_SetTargetFPS( 30 )
+	-- RL_SetTargetFPS( 10 )
+	-- RL_SetTargetFPS( 120 )
+	-- RL_SetTargetFPS( 600 )
+	
 	local confFile = dofile( path )
 
 	self.locale = confFile.locale
@@ -66,7 +73,6 @@ function Settings:writeToFile()
 	file:write( "fullscreen="..tostring( Settings.window.fullscreen )..",\n" )
 	file:write( "vsync="..tostring( Settings.window.vsync )..",\n" )
 	
-	-- file:write( "},\n},\n" )
 	file:write( "},\n" )
 
 	-- Keys.

@@ -5,6 +5,8 @@ function Game:new()
     local object = setmetatable( {}, self )
 
 	object.run = false
+	object.physics_delta = 1 / 60
+	object.physics_accumulator = 0.0
 
     return object
 end
@@ -16,6 +18,7 @@ end
 
 function Game:process( delta )
 	if self.run and not Menu.run then
+		self:physics_process( delta )
 		Player:process( delta )
 		Objects:process( delta )
 	end
@@ -24,6 +27,21 @@ function Game:process( delta )
 
 	if Settings.gamepad == nil and RL_IsGamepadAvailable( 0 ) then
 		Settings.gamepad = 0
+	end
+end
+
+function Game:physics_process( delta )
+	self.physics_accumulator = self.physics_accumulator + delta
+
+	local steps = math.floor( self.physics_accumulator / self.physics_delta )
+	-- print( "steps", steps )
+
+	for i = 0, steps - 1 do
+		-- print( "i", i )
+		-- print( "self.physics_accumulator", self.physics_accumulator )
+		Player:physics_process( self.physics_delta, i )
+
+		self.physics_accumulator = self.physics_accumulator - self.physics_delta
 	end
 end
 

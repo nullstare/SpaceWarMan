@@ -1,14 +1,19 @@
 Player = {}
 Player.__index = Player
 
-Player.MAXSPEED = 1.1
-Player.ACCELL = 8
-Player.DEACCELL = 8
-Player.AIR_ACCELL = 4
-Player.AIR_DEACCELL = 4
-Player.JUMP_SPEED = 2
-Player.JUMP_SUSTAIN_FORCE = 5
+-- Player.MAXSPEED = 1.1
+Player.MAXSPEED = 80
+Player.ACCELL = 7
+-- Player.ACCELL = 80
+-- Player.DEACCELL = 8
+Player.DEACCELL = 7
+Player.AIR_ACCELL = 5
+Player.AIR_DEACCELL = 5
+Player.JUMP_SPEED = 1.9
+-- Player.JUMP_SUSTAIN_FORCE = 200
+Player.JUMP_SUSTAIN_FORCE = 10
 Player.JUMP_SUSTAIN_MAX = 1.3
+-- Player.JUMP_SUSTAIN_MAX = 0.5
 Player.WALK_ANIM_SPEED = 12
 
 Player.BULLET_SPEED = 200
@@ -43,7 +48,8 @@ function Player:new()
 	object.aim = object.AIM.FRONT
 
 	object.collectedEnergyTanks = {}
-	object.doubleJump = false
+	-- object.doubleJump = false
+	object.doubleJump = true
 	object.usedDoubleJump = false
 
     return object
@@ -118,6 +124,48 @@ function Player:process( delta )
 		return
 	end
 
+	local shootPressed = RL_IsKeyPressed( Settings.keys.shoot ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
+	
+	-- Shoot.
+
+	if shootPressed then
+		local pos
+		local vel
+
+		if self.aim == self.AIM.UP then
+			pos = self.position + Vec2:new( 0, self.gunPosition.y )
+			vel = Vec2:new( 0, -self.BULLET_SPEED )
+		elseif self.aim == self.AIM.DIAGONAL then
+			pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
+			vel = Vec2:new( self.facing, -1 ):normalize():scale( self.BULLET_SPEED )
+		else
+			pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
+			vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
+		end
+
+		Objects:add( Objects.bullets, Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
+		RL_SetSoundPitch( Resources.sounds.shoot, 0.9 + math.random() * 0.2 )
+		RL_PlaySound( Resources.sounds.shoot )
+	end
+
+	-- Inv timer.
+	if 0 < self.invTimer then
+		self.invTimer = self.invTimer - delta
+	end
+
+	-- Check room transitions.
+	if Room.data.width * TILE_SIZE <= self.position.x then
+		Room:transition( "right" )
+	elseif self.position.x <= 0 then
+		Room:transition( "left" )
+	end
+end
+
+function Player:physics_process( delta, step )
+	if self.health <= 0 then
+		return
+	end
+
 	local moving = { false, false }
 	local rightDown = RL_IsKeyDown( Settings.keys.right ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.right ) )
 	local leftDown = RL_IsKeyDown( Settings.keys.left ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.left ) )
@@ -125,7 +173,6 @@ function Player:process( delta )
 	local diagonalDown = RL_IsKeyDown( Settings.keys.diagonal ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.diagonal ) )
 	local jumpPressed = RL_IsKeyPressed( Settings.keys.jump ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.jump ) )
 	local jumpDown = RL_IsKeyDown( Settings.keys.jump ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.jump ) )
-	local shootPressed = RL_IsKeyPressed( Settings.keys.shoot ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
 
 	-- Default aim to front.
 	self.aim = self.AIM.FRONT
@@ -150,6 +197,7 @@ function Player:process( delta )
 		end
 	elseif leftDown then
 		self.velocity.x = self.velocity.x - accell * delta
+
 		moving[1] = true
 
 		if self.velocity.x < 0 then
@@ -170,37 +218,45 @@ function Player:process( delta )
 
 		self.velocity.y = self.velocity.y - force
 		self.jumpSustain = self.jumpSustain - force
+
+		-- print( "self.jumpSustain", self.jumpSustain )
 	end
 
 	-- Double jump.
-	if jumpPressed and not self.onFloor and self.doubleJump and not self.usedDoubleJump then
+	if jumpPressed and not self.onFloor and self.doubleJump and not self.usedDoubleJump and step == 0 then
+		print( "Double jump" )
 		self.velocity.y = -self.JUMP_SPEED
 		self.onFloor = false
 		self.usedDoubleJump = true
 		self.jumpSustain = self.JUMP_SUSTAIN_MAX / 2
-		RL_PlaySound( Resources.sounds.jump )
+		-- RL_PlaySound( Resources.sounds.jump )
 	end
 
 	-- Main jump.
-	if jumpPressed and self.onFloor then
+	if jumpPressed and self.onFloor and step == 0 then
 		self.velocity.y = -self.JUMP_SPEED
 		self.onFloor = false
-		RL_PlaySound( Resources.sounds.jump )
+		-- RL_PlaySound( Resources.sounds.jump )
 	end
 
 	-- Deaccelerate.
 	if not moving[1] then
-		if delta * deaccell < self.velocity.x then
-			self.velocity.x = self.velocity.x - deaccell * delta
-		elseif self.velocity.x < -delta * deaccell then
+		if self.velocity.x < -deaccell * delta then
 			self.velocity.x = self.velocity.x + deaccell * delta
+		elseif deaccell * delta < self.velocity.x then
+			self.velocity.x = self.velocity.x - deaccell * delta
 		else
 			self.velocity.x = 0.0
 		end
 	end
 
-	self.velocity.x = util.clamp( self.velocity.x, -self.MAXSPEED, self.MAXSPEED )
+	-- print( self.velocity.x )
+
+	self.velocity.x = util.clamp( self.velocity.x, -self.MAXSPEED * delta, self.MAXSPEED * delta )
 	self.velocity.y = self.velocity.y + Room.GRAVITY * delta
+	-- self.velocity.y = self.velocity.y + Room.GRAVITY * delta
+
+	-- print( self.velocity.y, delta, RL_GetFrameTime(), RL_GetFPS() )
 
 	-- Drop from platform.
 	if self.onFloor and 0.5 < self.velocity.y then
@@ -250,41 +306,6 @@ function Player:process( delta )
 	end
 
 	Camera:setPosition( self.position )
-
-	-- Shoot.
-
-	if shootPressed then
-		local pos
-		local vel
-
-		if self.aim == self.AIM.UP then
-			pos = self.position + Vec2:new( 0, self.gunPosition.y )
-			vel = Vec2:new( 0, -self.BULLET_SPEED )
-		elseif self.aim == self.AIM.DIAGONAL then
-			pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
-			vel = Vec2:new( self.facing, -1 ):normalize():scale( self.BULLET_SPEED )
-		else
-			pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
-			vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
-		end
-
-		-- Bullets:add( Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
-		Objects:add( Objects.bullets, Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
-		RL_SetSoundPitch( Resources.sounds.shoot, 0.9 + math.random() * 0.2 )
-		RL_PlaySound( Resources.sounds.shoot )
-	end
-
-	-- Inv timer.
-	if 0 < self.invTimer then
-		self.invTimer = self.invTimer - delta
-	end
-
-	-- Check room transitions.
-	if Room.data.width * TILE_SIZE <= self.position.x then
-		Room:transition( "right" )
-	elseif self.position.x <= 0 then
-		Room:transition( "left" )
-	end
 end
 
 function Player:draw()

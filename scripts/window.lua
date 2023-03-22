@@ -85,7 +85,7 @@ function Window:draw()
 
 	RL_SetTextureSource( TEXTURE_SOURCE_TEXTURE )
 
-	-- RL_DrawFPS( { 5, 5 } )
+	RL_DrawFPS( { 5, 5 } )
 end
 
 Window = Window:new()

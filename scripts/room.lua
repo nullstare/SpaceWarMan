@@ -3,8 +3,13 @@ Room.__index = Room
 
 -- Render size of screen in tiles.
 -- Room.TILE_RENDER_SIZE = Vec2:new( 40 + 1, 32 + 1 )
-Room.TILE_RENDER_SIZE = Vec2:new( math.ceil( Window.FRAMEBUFFER_SIZE.x / TILE_SIZE ) + 1, math.ceil( Window.FRAMEBUFFER_SIZE.y / TILE_SIZE ) + 1 )
+Room.TILE_RENDER_SIZE = Vec2:new(
+	math.ceil( Window.FRAMEBUFFER_SIZE.x / TILE_SIZE ) + 1,
+	math.ceil( Window.FRAMEBUFFER_SIZE.y / TILE_SIZE ) + 1
+)
+-- Room.GRAVITY = 60
 Room.GRAVITY = 6
+-- Room.GRAVITY = 0.6
 
 function Room:new()
     local object = setmetatable( {}, self )
@@ -225,7 +230,10 @@ function Room:process( delta )
 end
 
 function Room:drawTilemap( tilemap )
-	local camTilePos = Vec2:new( math.floor( ( Camera.position.x - Camera.offset.x ) / TILE_SIZE ), math.floor( ( Camera.position.y - Camera.offset.y ) / TILE_SIZE ) )
+	local camTilePos = Vec2:new(
+		math.floor( ( Camera.position.x - Camera.offset.x ) / TILE_SIZE ),
+		math.floor( ( Camera.position.y - Camera.offset.y ) / TILE_SIZE )
+	)
 
 	for x = camTilePos.x, self.TILE_RENDER_SIZE.x + camTilePos.x do
 		for y = camTilePos.y, self.TILE_RENDER_SIZE.y + camTilePos.y do
@@ -233,7 +241,7 @@ function Room:drawTilemap( tilemap )
 
 			if tilemap[ tilePos.x ] ~= nil and tilemap[ tilePos.x ][ tilePos.y ] ~= nil then
 				local tileId = tilemap[ tilePos.x ][ tilePos.y ]
-				
+
 				if 0 < tileId then
 					local tileDrawPos = Vec2:new()
 
@@ -244,7 +252,12 @@ function Room:drawTilemap( tilemap )
 					tileDrawPos.x = ( tileId - tileDrawPos.y * self.tileTextureTileSize.x ) * TILE_SIZE 
 					tileDrawPos.y = tileDrawPos.y * TILE_SIZE
 
-					RL_DrawTextureRec( self.tileTexture, { tileDrawPos.x, tileDrawPos.y, TILE_SIZE, TILE_SIZE }, { (x-1) * TILE_SIZE, (y-1) * TILE_SIZE }, WHITE )
+					RL_DrawTextureRec(
+						self.tileTexture,
+						{ tileDrawPos.x, tileDrawPos.y, TILE_SIZE, TILE_SIZE },
+						{ (x-1) * TILE_SIZE, (y-1) * TILE_SIZE },
+						WHITE
+					)
 				end
 			end
 		end
