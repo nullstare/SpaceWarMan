@@ -43,6 +43,16 @@ function Health:destroy()
 end
 
 function Health:process( delta )
+	self.sprite:playAnimation( self.ANIM_SPEED * delta )
+
+	self.lifetime = self.lifetime - delta
+
+	if self.lifetime <= 0 then
+		self:destroy()
+	end
+end
+
+function Health:physicsProcess( delta, step )
 	self.velocity.y = self.velocity.y + Room.GRAVITY * delta
 
 	if self.onFloor then
@@ -64,14 +74,6 @@ function Health:process( delta )
 		self:destroy()
 		RL_PlaySound( Resources.sounds.pickup )
 		Player:heal( 1 )
-	end
-
-	self.sprite:playAnimation( self.ANIM_SPEED * delta )
-
-	self.lifetime = self.lifetime - delta
-
-	if self.lifetime <= 0 then
-		self:destroy()
 	end
 end
 

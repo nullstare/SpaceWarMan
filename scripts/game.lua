@@ -5,8 +5,8 @@ function Game:new()
     local object = setmetatable( {}, self )
 
 	object.run = false
-	object.physics_delta = 1 / 60
-	object.physics_accumulator = 0.0
+	object.physicsDelta = 1 / 60
+	object.physicsAccumulator = 0.0
 
     return object
 end
@@ -18,9 +18,9 @@ end
 
 function Game:process( delta )
 	if self.run and not Menu.run then
-		self:physics_process( delta )
 		Player:process( delta )
 		Objects:process( delta )
+		self:physicsProcess( delta )
 	end
 	-- UI needs to process even when game doesn't.
 	UI:process( delta )
@@ -30,18 +30,16 @@ function Game:process( delta )
 	end
 end
 
-function Game:physics_process( delta )
-	self.physics_accumulator = self.physics_accumulator + delta
+function Game:physicsProcess( delta )
+	self.physicsAccumulator = self.physicsAccumulator + delta
 
-	local steps = math.floor( self.physics_accumulator / self.physics_delta )
-	-- print( "steps", steps )
+	local steps = math.floor( self.physicsAccumulator / self.physicsDelta )
 
 	for i = 0, steps - 1 do
-		-- print( "i", i )
-		-- print( "self.physics_accumulator", self.physics_accumulator )
-		Player:physics_process( self.physics_delta, i )
+		Player:physicsProcess( self.physicsDelta, i )
+		Objects:physicsProcess( self.physicsDelta, i )
 
-		self.physics_accumulator = self.physics_accumulator - self.physics_delta
+		self.physicsAccumulator = self.physicsAccumulator - self.physicsDelta
 	end
 end
 
@@ -51,7 +49,6 @@ function Game:draw()
 	end
 
 	RL_DrawTexture( Room.bgrImage, Room.bgrImagePos, WHITE )
-
 	RL_SetCamera2DTarget( Camera.camera, Camera.position )
 
 	RL_BeginMode2D( Camera.camera )

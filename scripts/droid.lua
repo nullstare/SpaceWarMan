@@ -87,6 +87,34 @@ end
 function Droid:process( delta )
 	self.sprite.HFacing = self.facing
 
+	-- Drop from platform.
+	if self.onFloor and 0.5 < self.velocity.y then
+		self.onFloor = false
+	end
+
+	if self.onFloor then
+		if 0.1 < math.abs( self.velocity.x ) then
+			self.sprite.animation = "walk"
+			self.sprite:playAnimation( math.abs( self.velocity.x ) * self.WALK_ANIM_SPEED * delta )
+		else
+			self.sprite.animation = "idle"
+			self.animationPos = 0.0
+		end
+	elseif not self.onFloor then
+		self.sprite.animation = "walk"
+		self.sprite.animationPos = 0.0
+	end
+
+	if RL_CheckCollisionRecs( self.colRect, Player.colRect ) then
+		Player:takeDamage( 1 )
+	end
+
+	if self.onFloor and self.velocity.x ~= 0.0 and math.abs( self.velocity.x ) < 0.001 then
+		self.facing = self.facing * -1.0
+	end
+end
+
+function Droid:physicsProcess( delta, step )
 	if self.action == self.ACTIONS.WALK then
 		self.velocity.x = self.facing * self.WALK_SPEED * delta
 	elseif self.action == self.ACTIONS.JUMP then
@@ -116,24 +144,6 @@ function Droid:process( delta )
 	
 	self.velocity.y = self.velocity.y + Room.GRAVITY * delta
 
-	-- Drop from platform.
-	if self.onFloor and 0.5 < self.velocity.y then
-		self.onFloor = false
-	end
-
-	if self.onFloor then
-		if 0.1 < math.abs( self.velocity.x ) then
-			self.sprite.animation = "walk"
-			self.sprite:playAnimation( math.abs( self.velocity.x ) * self.WALK_ANIM_SPEED * delta )
-		else
-			self.sprite.animation = "idle"
-			self.animationPos = 0.0
-		end
-	elseif not self.onFloor then
-		self.sprite.animation = "walk"
-		self.sprite.animationPos = 0.0
-	end
-
 	-- On map edge.
 
 	if self.position.x < 8 then
@@ -146,14 +156,6 @@ function Droid:process( delta )
 
 	Room:tileCollision( self )
 	self:setPosition( self.position + self.velocity )
-
-	if RL_CheckCollisionRecs( self.colRect, Player.colRect ) then
-		Player:takeDamage( 1 )
-	end
-
-	if self.onFloor and self.velocity.x ~= 0.0 and math.abs( self.velocity.x ) < 0.001 then
-		self.facing = self.facing * -1.0
-	end
 end
 
 function Droid:draw()

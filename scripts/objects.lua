@@ -60,11 +60,24 @@ function Objects:processTable( t, delta )
 	end
 end
 
+function Objects:processPhysicsTable( t, delta, step )
+	for i, obj in ipairs( t ) do
+		if obj ~= self.FREE and obj.physicsProcess ~= nil then
+			obj:physicsProcess( delta, step )
+		end
+	end
+end
+
 function Objects:process( delta )
 	self:processTable( self.enemies, delta )
-	self:processTable( self.bullets, delta )
 	self:processTable( self.emitters, delta )
 	self:processTable( self.pickups, delta )
+end
+
+function Objects:physicsProcess( delta, step )
+	self:processPhysicsTable( self.enemies, delta, step )
+	self:processPhysicsTable( self.bullets, delta, step )
+	self:processPhysicsTable( self.pickups, delta, step )
 end
 
 function Objects:drawTable( t )

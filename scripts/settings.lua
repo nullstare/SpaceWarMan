@@ -45,9 +45,10 @@ function Settings:init()
 		return
 	end
 
-	RL_SetTargetFPS( 60 )
+	-- RL_SetTargetFPS( 60 )
 	-- RL_SetTargetFPS( 50 )
 	-- RL_SetTargetFPS( 30 )
+	-- RL_SetTargetFPS( 15 )
 	-- RL_SetTargetFPS( 10 )
 	-- RL_SetTargetFPS( 120 )
 	-- RL_SetTargetFPS( 600 )
