@@ -71,6 +71,8 @@ function Window:process( delta )
 end
 
 function Window:draw()
+	Room:updateFramebuffer()
+
 	RL_BeginTextureMode( self.framebuffer )
 		RL_ClearBackground( BLACK )
 		Game:draw()
@@ -80,8 +82,14 @@ function Window:draw()
 	RL_ClearBackground( BLACK )
 	RL_SetTextureSource( TEXTURE_SOURCE_RENDER_TEXTURE )
 
-	RL_DrawTexturePro( self.framebuffer, { 0, 0, self.FRAMEBUFFER_SIZE.x, -self.FRAMEBUFFER_SIZE.y },
-{ self.framebufferRect.x, self.framebufferRect.y, self.framebufferRect.width, self.framebufferRect.height }, { 0, 0 }, 0.0, WHITE )
+	RL_DrawTexturePro(
+		self.framebuffer,
+		{ 0, 0, self.FRAMEBUFFER_SIZE.x, -self.FRAMEBUFFER_SIZE.y },
+		{ self.framebufferRect.x, self.framebufferRect.y, self.framebufferRect.width, self.framebufferRect.height },
+		{ 0, 0 },
+		0.0,
+		WHITE
+	)
 
 	RL_SetTextureSource( TEXTURE_SOURCE_TEXTURE )
 

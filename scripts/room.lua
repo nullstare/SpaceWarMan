@@ -2,14 +2,15 @@ Room = {}
 Room.__index = Room
 
 -- Render size of screen in tiles.
--- Room.TILE_RENDER_SIZE = Vec2:new( 40 + 1, 32 + 1 )
 Room.TILE_RENDER_SIZE = Vec2:new(
 	math.ceil( Window.FRAMEBUFFER_SIZE.x / TILE_SIZE ) + 1,
 	math.ceil( Window.FRAMEBUFFER_SIZE.y / TILE_SIZE ) + 1
 )
--- Room.GRAVITY = 60
+Room.TILE_FRAMEBUFFER_SIZE = Vec2:new(
+	( Room.TILE_RENDER_SIZE.x + 1 ) * TILE_SIZE,
+	( Room.TILE_RENDER_SIZE.y + 1 ) * TILE_SIZE
+)
 Room.GRAVITY = 6
--- Room.GRAVITY = 0.6
 
 function Room:new()
     local object = setmetatable( {}, self )
@@ -20,11 +21,14 @@ function Room:new()
 	object.bgrTiles = {}
 	object.bgrTiles2 = {}
 	object.tileTexture = nil
-	object.tileTextureSize = Vec2:new( 0, 0 )
-	object.tileTextureTileSize = Vec2:new( 0, 0 )
+	object.tileTextureSize = Vec2:new()
+	object.tileTextureTileSize = Vec2:new()
 	object.bgrImage = nil
 	object.bgrImagePos = Vec2:new()
 	object.transitions = { left = nil, right = nil, up = nil, down = nil } -- Correspond to Room.TRANSITION.
+
+	object.tilemapFramebuffer = RL_LoadRenderTexture( Room.TILE_FRAMEBUFFER_SIZE )
+	object.updateTilePos = Vec2:new( -1, -1 )
 
     return object
 end
@@ -107,6 +111,7 @@ function Room:clear()
 	self.bgrTiles2 = {}
 
 	Objects:clear()
+	self.updateTilePos:set( -1, -1 )
 end
 
 function Room:transition( direction )
@@ -230,14 +235,11 @@ function Room:process( delta )
 end
 
 function Room:drawTilemap( tilemap )
-	local camTilePos = Vec2:new(
-		math.floor( ( Camera.position.x - Camera.offset.x ) / TILE_SIZE ),
-		math.floor( ( Camera.position.y - Camera.offset.y ) / TILE_SIZE )
-	)
+	local camTilePos = self.updateTilePos
 
-	for x = camTilePos.x, self.TILE_RENDER_SIZE.x + camTilePos.x do
-		for y = camTilePos.y, self.TILE_RENDER_SIZE.y + camTilePos.y do
-			local tilePos = Vec2:new( x, y )
+	for x = 0, self.TILE_RENDER_SIZE.x do
+		for y = 0, self.TILE_RENDER_SIZE.y do
+			local tilePos = Vec2:new( x + camTilePos.x, y + camTilePos.y )
 
 			if tilemap[ tilePos.x ] ~= nil and tilemap[ tilePos.x ][ tilePos.y ] ~= nil then
 				local tileId = tilemap[ tilePos.x ][ tilePos.y ]
@@ -264,10 +266,39 @@ function Room:drawTilemap( tilemap )
 	end
 end
 
+function Room:updateFramebuffer()
+	local camTilePos = Vec2:new(
+		math.floor( ( Camera.position.x - Camera.offset.x ) / TILE_SIZE ),
+		math.floor( ( Camera.position.y - Camera.offset.y ) / TILE_SIZE )
+	)
+
+	-- Update framebuffer.
+
+	if camTilePos ~= self.updateTilePos then
+		self.updateTilePos = camTilePos:clone()
+
+		RL_BeginTextureMode( self.tilemapFramebuffer )
+			RL_ClearBackground( BLANK )
+			self:drawTilemap( self.bgrTiles2 )
+			self:drawTilemap( self.bgrTiles )
+			self:drawTilemap( self.wallTiles )
+		RL_EndTextureMode()
+	end
+end
+
 function Room:draw()
-	self:drawTilemap( self.bgrTiles2 )
-	self:drawTilemap( self.bgrTiles )
-	self:drawTilemap( self.wallTiles )
+	RL_SetTextureSource( TEXTURE_SOURCE_RENDER_TEXTURE )
+
+	RL_DrawTexturePro(
+		self.tilemapFramebuffer,
+		{ 0, 0, self.TILE_FRAMEBUFFER_SIZE.x, -self.TILE_FRAMEBUFFER_SIZE.y },
+		{ self.updateTilePos.x * TILE_SIZE, self.updateTilePos.y * TILE_SIZE, self.TILE_FRAMEBUFFER_SIZE.x, self.TILE_FRAMEBUFFER_SIZE.y },
+		{ 0, 0 },
+		0.0,
+		WHITE
+	)
+
+	RL_SetTextureSource( TEXTURE_SOURCE_TEXTURE )
 end
 
 Room = Room:new()
