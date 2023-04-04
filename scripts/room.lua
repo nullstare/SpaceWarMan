@@ -76,11 +76,11 @@ function Room:load( name )
 		end
 	end
 
-	-- Load objects.
+	-- Load ECS.
 
 	for _, layer in ipairs( self.data.layers ) do
-		if layer.name == "objects" then
-			for _, object in ipairs( layer.objects ) do
+		if layer.name == "ECS" then
+			for _, object in ipairs( layer.ECS ) do
 				local facing = 1
 
 				if object.properties.flipped ~= nil and object.properties.flipped then
@@ -90,11 +90,11 @@ function Room:load( name )
 				if not Player.inited and object.name == "player" then
 					Player:init( Vec2:new( object.x + 8, object.y ) )
 				elseif object.name == "droid" then
-					Objects:add( Objects.enemies, Droid:new( Vec2:new( object.x + 8, object.y ), facing ) )
+					ECS:add( ECS.enemies, Droid:new( Vec2:new( object.x + 8, object.y ), facing ) )
 				elseif object.name == "energyTank" and Player.collectedEnergyTanks[ object.properties.name ] == nil then
-					Objects:add( Objects.pickups, EnergyTank:new( Vec2:new( object.x, object.y ), object.properties.name ) )
+					ECS:add( ECS.pickups, EnergyTank:new( Vec2:new( object.x, object.y ), object.properties.name ) )
 				elseif object.name == "doubleJump" and not Player.doubleJump then
-					Objects:add( Objects.pickups, DoubleJump:new( Vec2:new( object.x, object.y ) ) )
+					ECS:add( ECS.pickups, DoubleJump:new( Vec2:new( object.x, object.y ) ) )
 				end
 			end
 		end
@@ -110,7 +110,7 @@ function Room:clear()
 	self.bgrTiles = {}
 	self.bgrTiles2 = {}
 
-	Objects:clear()
+	ECS:clear()
 	self.updateTilePos:set( -1, -1 )
 end
 

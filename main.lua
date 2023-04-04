@@ -19,7 +19,7 @@ require( "scripts/room" )
 require( "scripts/camera" )
 require( "scripts/sprite" )
 require( "scripts/player" )
-require( "scripts/objects" )
+require( "scripts/ECS" )
 
 function init()
 	Settings:init()

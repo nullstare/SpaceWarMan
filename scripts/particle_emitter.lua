@@ -79,7 +79,7 @@ function ParticleEmitter:process( delta )
 end
 
 function ParticleEmitter:destroy()
-	Objects.emitters[ self.id ] = Objects.FREE
+	ECS.emitters[ self.id ] = ECS.FREE
 end
 
 function ParticleEmitter:draw()

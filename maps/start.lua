@@ -196,7 +196,7 @@ return {
       type = "objectgroup",
       draworder = "topdown",
       id = 3,
-      name = "objects",
+      name = "ECS",
       class = "",
       visible = true,
       opacity = 1,
@@ -205,7 +205,7 @@ return {
       parallaxx = 1,
       parallaxy = 1,
       properties = {},
-      objects = {
+      ECS = {
         {
           id = 22,
           name = "player",

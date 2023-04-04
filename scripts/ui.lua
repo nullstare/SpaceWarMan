@@ -38,9 +38,9 @@ function UI:drawUi()
 
 	for i = 0, containers - 1 do
 		if i * Player.TANK_HEALTH < Player.health then
-			RL_DrawTextureRec( Resources.textures.objectsAndEnemies, self.CONTAINER_RECT_FULL, pos, WHITE )
+			RL_DrawTextureRec( Resources.textures.ObjectsAndEnemies, self.CONTAINER_RECT_FULL, pos, WHITE )
 		else
-			RL_DrawTextureRec( Resources.textures.objectsAndEnemies, self.CONTAINER_RECT_EMPTY, pos, WHITE )
+			RL_DrawTextureRec( Resources.textures.ObjectsAndEnemies, self.CONTAINER_RECT_EMPTY, pos, WHITE )
 		end
 		pos.x = pos.x + 13
 	end
@@ -50,9 +50,9 @@ function UI:drawUi()
 
 	for i = 0, Player.TANK_HEALTH - 1 do
 		if 0 < Player.health and i + 1 <= Player.health - math.floor( ( Player.health - 1 ) / Player.TANK_HEALTH ) * Player.TANK_HEALTH then
-			RL_DrawTextureRec( Resources.textures.objectsAndEnemies, self.HEALTH_RECT_FULL, pos, WHITE )
+			RL_DrawTextureRec( Resources.textures.ObjectsAndEnemies, self.HEALTH_RECT_FULL, pos, WHITE )
 		else
-			RL_DrawTextureRec( Resources.textures.objectsAndEnemies, self.HEALTH_RECT_EMPTY, pos, WHITE )
+			RL_DrawTextureRec( Resources.textures.ObjectsAndEnemies, self.HEALTH_RECT_EMPTY, pos, WHITE )
 		end
 
 		pos.x = pos.x + 8

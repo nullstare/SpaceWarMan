@@ -24,7 +24,7 @@ function Health:new( pos )
 	object.colRect = Rect:new( pos.x - 4, pos.y - 8, 8, 8 )
 	object.lifetime = object.LIFETIME
 
-	object.sprite = Sprite:new( Resources.textures.objectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 4, 8 ), 0.0, WHITE )
+	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 4, 8 ), 0.0, WHITE )
 	object.sprite.animations = object.ANIMATIONS
 	object.sprite.animation = "idle"
 
@@ -39,7 +39,7 @@ function Health:setPosition( pos )
 end
 
 function Health:destroy()
-	Objects.pickups[ self.id ] = Objects.FREE
+	ECS.pickups[ self.id ] = ECS.FREE
 end
 
 function Health:process( delta )

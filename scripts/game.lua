@@ -19,7 +19,7 @@ end
 function Game:process( delta )
 	if self.run and not Menu.run then
 		Player:process( delta )
-		Objects:process( delta )
+		ECS:process( delta )
 		self:physicsProcess( delta )
 	end
 	-- UI needs to process even when game doesn't.
@@ -37,7 +37,7 @@ function Game:physicsProcess( delta )
 
 	for i = 0, steps - 1 do
 		Player:physicsProcess( self.physicsDelta, i )
-		Objects:physicsProcess( self.physicsDelta, i )
+		ECS:physicsProcess( self.physicsDelta, i )
 
 		self.physicsAccumulator = self.physicsAccumulator - self.physicsDelta
 	end
@@ -54,7 +54,7 @@ function Game:draw()
 	RL_BeginMode2D( Camera.camera )
 		Room:draw()
 		Player:draw()
-		Objects:draw()
+		ECS:draw()
 	RL_EndMode2D()
 
 	UI:draw()

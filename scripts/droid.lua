@@ -28,7 +28,7 @@ function Droid:new( pos, facing )
 	object.onFloor = false
 	object.colRect = Rect:new( pos.x, pos.y, 10, 13 )
 
-	object.sprite = Sprite:new( Resources.textures.objectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 16 / 2, 14 ), 0.0, WHITE )
+	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 16 / 2, 14 ), 0.0, WHITE )
 	object.sprite.animations = object.ANIMATIONS
 	object.sprite.animation = "idle"
 
@@ -50,10 +50,10 @@ function Droid:setPosition( pos )
 end
 
 function Droid:destroy()
-	Objects.enemies[ self.id ] = Objects.FREE
+	ECS.enemies[ self.id ] = ECS.FREE
 	RL_PlaySound( Resources.sounds.exlosion )
 
-	Objects:add( Objects.emitters, ParticleEmitter:new(
+	ECS:add( ECS.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		Rect:new( 2, 36, 10, 10 ),
@@ -71,7 +71,7 @@ function Droid:destroy()
 	local dropRoll = math.random()
 
 	if dropRoll < 0.3 then
-		Objects:add( Objects.pickups, Health:new( self.position, Vec2:new() ) )
+		ECS:add( ECS.pickups, Health:new( self.position, Vec2:new() ) )
 	end
 end
 

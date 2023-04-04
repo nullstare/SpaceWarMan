@@ -1,8 +1,8 @@
-Objects = {}
-Objects.__index = Objects
+ECS = {}
+ECS.__index = ECS
 
-Objects.FREE = 0
-Objects.HIT = {
+ECS.FREE = 0
+ECS.HIT = {
 	ENEMIES = 0,
 	PLAYER = 1,
 }
@@ -18,7 +18,7 @@ require( "scripts/health" )
 require( "scripts/energy_tank" )
 require( "scripts/double_jump" )
 
-function Objects:new()
+function ECS:new()
 	local object = setmetatable( {}, self )
 
 	object.bullets = {}
@@ -29,7 +29,7 @@ function Objects:new()
     return object
 end
 
-function Objects:add( t, obj )
+function ECS:add( t, obj )
 	obj.id = 1
 
 	for i, b in ipairs( t ) do
@@ -45,14 +45,14 @@ function Objects:add( t, obj )
 	table.insert( t, obj )
 end
 
-function Objects:clear()
+function ECS:clear()
 	self.bullets = {}
 	self.enemies = {}
 	self.emitters = {}
 	self.pickups = {}
 end
 
-function Objects:processTable( t, delta )
+function ECS:processTable( t, delta )
 	for i, obj in ipairs( t ) do
 		if obj ~= self.FREE and obj.process ~= nil then
 			obj:process( delta )
@@ -60,7 +60,7 @@ function Objects:processTable( t, delta )
 	end
 end
 
-function Objects:processPhysicsTable( t, delta, step )
+function ECS:processPhysicsTable( t, delta, step )
 	for i, obj in ipairs( t ) do
 		if obj ~= self.FREE and obj.physicsProcess ~= nil then
 			obj:physicsProcess( delta, step )
@@ -68,19 +68,19 @@ function Objects:processPhysicsTable( t, delta, step )
 	end
 end
 
-function Objects:process( delta )
+function ECS:process( delta )
 	self:processTable( self.enemies, delta )
 	self:processTable( self.emitters, delta )
 	self:processTable( self.pickups, delta )
 end
 
-function Objects:physicsProcess( delta, step )
+function ECS:physicsProcess( delta, step )
 	self:processPhysicsTable( self.enemies, delta, step )
 	self:processPhysicsTable( self.bullets, delta, step )
 	self:processPhysicsTable( self.pickups, delta, step )
 end
 
-function Objects:drawTable( t )
+function ECS:drawTable( t )
 	for _, obj in ipairs( t ) do
 		if obj ~= self.FREE and obj.draw ~= nil then
 			obj:draw()
@@ -88,11 +88,11 @@ function Objects:drawTable( t )
 	end
 end
 
-function Objects:draw()
+function ECS:draw()
 	self:drawTable( self.enemies )
 	self:drawTable( self.pickups )
 	self:drawTable( self.bullets )
 	self:drawTable( self.emitters )
 end
 
-Objects = Objects:new()
+ECS = ECS:new()

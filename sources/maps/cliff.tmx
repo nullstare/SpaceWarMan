@@ -120,7 +120,7 @@
 55,54,55,54,55,55,11,10,11,6,52,52,53,50,51,52,53,53,51,8,9,50,51,50,8,9,189,366,367,368,494,191,192,50,51,52,52,53,10,11
 </data>
  </layer>
- <objectgroup id="3" name="objects">
+ <objectgroup id="3" name="ECS">
   <object id="22" name="droid" gid="2147484442" x="200" y="104" width="16" height="16">
    <properties>
     <property name="flipped" type="bool" value="true"/>
