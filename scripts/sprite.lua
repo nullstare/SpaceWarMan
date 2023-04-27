@@ -21,7 +21,7 @@ function Sprite:new( texture, source, dest, origin, rotation, tint )
 end
 
 function Sprite:getCurFrame()
-	return util.clamp( math.ceil( self.animationPos ), 1, #self.animations[ self.animation ] )
+	return Util.clamp( math.ceil( self.animationPos ), 1, #self.animations[ self.animation ] )
 end
 
 function Sprite:playAnimation( advance )
@@ -45,11 +45,11 @@ function Sprite:draw( pos )
 		dest = self.animations[ self.animation ][ self:getCurFrame() ].dest:clone()
 	end
 
-	dest.x = util.round( pos.x )
-	dest.y = util.round( pos.y )
+	dest.x = Util.round( pos.x )
+	dest.y = Util.round( pos.y )
 
 	source.width = source.width * self.HFacing
 	source.height = source.height * self.VFacing
 
-	RL_DrawTexturePro( self.texture, source, dest, self.origin, self.rotation, self.tint )
+	RL.DrawTexturePro( self.texture, source, dest, self.origin, self.rotation, self.tint )
 end

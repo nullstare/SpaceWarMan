@@ -16,7 +16,7 @@ function EnergyTank:new( pos, name )
 	object.position = Vec2:new( pos.x + 4, pos.y )
 	object.colRect = Rect:new( pos.x, pos.y - 8, 14, 8 )
 
-	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 4, 8 ), 0.0, WHITE )
+	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 4, 8 ), 0.0, RL.WHITE )
 	object.sprite.animations = object.ANIMATIONS
 	object.sprite.animation = "idle"
 
@@ -30,12 +30,12 @@ function EnergyTank:destroy()
 end
 
 function EnergyTank:process( delta )
-	if RL_CheckCollisionRecs( self.colRect, Player.colRect ) then
+	if RL.CheckCollisionRecs( self.colRect, Player.colRect ) then
 		Player.collectedEnergyTanks[ self.name ] = true
 		Player.energyTanks = Player.energyTanks + 1
 		Player.health = Player.health + Player.TANK_HEALTH
 		self:destroy()
-		RL_PlaySound( Resources.sounds.powerUp )
+		RL.PlaySound( Resources.sounds.powerUp )
 		UI:setMessage( Resources.locale.energyTankAcquired )
 	end
 
@@ -47,5 +47,5 @@ function EnergyTank:draw()
 		self.sprite:draw( self.position )
 	end
 
-	-- RL_DrawRectangle( self.colRect, { 0, 255, 0, 50 } )
+	-- RL.DrawRectangle( self.colRect, { 0, 255, 0, 50 } )
 end

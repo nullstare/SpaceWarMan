@@ -27,7 +27,7 @@ function Room:new()
 	object.bgrImagePos = Vec2:new()
 	object.transitions = { left = nil, right = nil, up = nil, down = nil } -- Correspond to Room.TRANSITION.
 
-	object.tilemapFramebuffer = RL_LoadRenderTexture( Room.TILE_FRAMEBUFFER_SIZE )
+	object.tilemapFramebuffer = RL.LoadRenderTexture( Room.TILE_FRAMEBUFFER_SIZE )
 	object.updateTilePos = Vec2:new( -1, -1 )
 
     return object
@@ -37,9 +37,9 @@ function Room:load( name )
 	self:clear()
 
 	self.tileTexture = Resources.textures.tileset
-	self.tileTextureSize = Vec2:new( RL_GetTextureSize( self.tileTexture ) )
+	self.tileTextureSize = Vec2:new( RL.GetTextureSize( self.tileTexture ) )
 	self.tileTextureTileSize = Vec2:new( self.tileTextureSize.x / TILE_SIZE, self.tileTextureSize.y / TILE_SIZE )
-	self.data = dofile( RL_GetBasePath().."maps/"..name )
+	self.data = dofile( RL.GetBasePath().."maps/"..name )
 
 	-- Set properties.
 
@@ -60,7 +60,7 @@ function Room:load( name )
 		table.insert( self.wallTiles, {} )
 		table.insert( self.bgrTiles, {} )
 		table.insert( self.bgrTiles2, {} )
-		
+
 		for y = 1, self.data.height do
 			local i = (x-1) + (y-1) * self.data.width + 1
 
@@ -76,11 +76,11 @@ function Room:load( name )
 		end
 	end
 
-	-- Load ECS.
+	-- Load Entities.
 
 	for _, layer in ipairs( self.data.layers ) do
-		if layer.name == "ECS" then
-			for _, object in ipairs( layer.ECS ) do
+		if layer.name == "Entities" then
+			for _, object in ipairs( layer.objects ) do
 				local facing = 1
 
 				if object.properties.flipped ~= nil and object.properties.flipped then
@@ -111,6 +111,7 @@ function Room:clear()
 	self.bgrTiles2 = {}
 
 	ECS:clear()
+	-- Set to -1 so we will force update.
 	self.updateTilePos:set( -1, -1 )
 end
 
@@ -131,7 +132,7 @@ function Room:transition( direction )
 end
 
 function Room:isTileWall( pos )
-	if RL_CheckCollisionPointRec( { pos.x, pos.y }, { 0, 0, self.data.width - 1, self.data.height - 1 } ) then
+	if RL.CheckCollisionPointRec( { pos.x, pos.y }, { 0, 0, self.data.width - 1, self.data.height - 1 } ) then
 		return 0 < self.wallTiles[ pos.x + 1 ][ pos.y + 1 ]
 	else
 		return false
@@ -251,14 +252,14 @@ function Room:drawTilemap( tilemap )
 					tileId = tileId - 1
 
 					tileDrawPos.y = math.floor( tileId / self.tileTextureTileSize.x ) 
-					tileDrawPos.x = ( tileId - tileDrawPos.y * self.tileTextureTileSize.x ) * TILE_SIZE 
+					tileDrawPos.x = ( tileId - tileDrawPos.y * self.tileTextureTileSize.x ) * TILE_SIZE
 					tileDrawPos.y = tileDrawPos.y * TILE_SIZE
 
-					RL_DrawTextureRec(
+					RL.DrawTextureRec(
 						self.tileTexture,
 						{ tileDrawPos.x, tileDrawPos.y, TILE_SIZE, TILE_SIZE },
 						{ (x-1) * TILE_SIZE, (y-1) * TILE_SIZE },
-						WHITE
+						RL.WHITE
 					)
 				end
 			end
@@ -277,28 +278,28 @@ function Room:updateFramebuffer()
 	if camTilePos ~= self.updateTilePos then
 		self.updateTilePos = camTilePos:clone()
 
-		RL_BeginTextureMode( self.tilemapFramebuffer )
-			RL_ClearBackground( BLANK )
+		RL.BeginTextureMode( self.tilemapFramebuffer )
+			RL.ClearBackground( RL.BLANK )
 			self:drawTilemap( self.bgrTiles2 )
 			self:drawTilemap( self.bgrTiles )
 			self:drawTilemap( self.wallTiles )
-		RL_EndTextureMode()
+		RL.EndTextureMode()
 	end
 end
 
 function Room:draw()
-	RL_SetTextureSource( TEXTURE_SOURCE_RENDER_TEXTURE )
+	RL.SetTextureSource( RL.TEXTURE_SOURCE_RENDER_TEXTURE )
 
-	RL_DrawTexturePro(
+	RL.DrawTexturePro(
 		self.tilemapFramebuffer,
 		{ 0, 0, self.TILE_FRAMEBUFFER_SIZE.x, -self.TILE_FRAMEBUFFER_SIZE.y },
 		{ self.updateTilePos.x * TILE_SIZE, self.updateTilePos.y * TILE_SIZE, self.TILE_FRAMEBUFFER_SIZE.x, self.TILE_FRAMEBUFFER_SIZE.y },
 		{ 0, 0 },
 		0.0,
-		WHITE
+		RL.WHITE
 	)
 
-	RL_SetTextureSource( TEXTURE_SOURCE_TEXTURE )
+	RL.SetTextureSource( RL.TEXTURE_SOURCE_TEXTURE )
 end
 
 Room = Room:new()

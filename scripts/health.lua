@@ -19,12 +19,12 @@ function Health:new( pos )
 
 	object.id = 1
 	object.position = pos
-	object.velocity = Vec2:new( util.randomFloat( -1.0, 1.0 ), -2 )
+	object.velocity = Vec2:new( Util.randomFloat( -1.0, 1.0 ), -2 )
 	object.onFloor = false
 	object.colRect = Rect:new( pos.x - 4, pos.y - 8, 8, 8 )
 	object.lifetime = object.LIFETIME
 
-	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 4, 8 ), 0.0, WHITE )
+	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 4, 8 ), 0.0, RL.WHITE )
 	object.sprite.animations = object.ANIMATIONS
 	object.sprite.animation = "idle"
 
@@ -70,9 +70,9 @@ function Health:physicsProcess( delta, step )
 	Room:tileCollision( self )
 	self:setPosition( self.position + self.velocity )
 
-	if RL_CheckCollisionRecs( self.colRect, Player.colRect ) then
+	if RL.CheckCollisionRecs( self.colRect, Player.colRect ) then
 		self:destroy()
-		RL_PlaySound( Resources.sounds.pickup )
+		RL.PlaySound( Resources.sounds.pickup )
 		Player:heal( 1 )
 	end
 end

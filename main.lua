@@ -1,7 +1,7 @@
-package.path = package.path..";"..RL_GetBasePath().."libs/?.lua"
-package.path = package.path..";"..RL_GetBasePath().."?.lua"
+package.path = package.path..";"..RL.GetBasePath().."libs/?.lua"
+package.path = package.path..";"..RL.GetBasePath().."?.lua"
 
-util = require( "utillib" )
+Util = require( "utillib" )
 Vec2 = require( "vector2" )
 Rect = require( "rectangle" )
 Color = require( "color" )
@@ -21,21 +21,19 @@ require( "scripts/sprite" )
 require( "scripts/player" )
 require( "scripts/ECS" )
 
-function init()
+function RL.init()
 	Settings:init()
 	Resources:init()
 	Window:init()
 	Menu:init()
-
-	-- Game:start()
 end
 
-function process( delta )
+function RL.process( delta )
 	Window:process( delta )
 	Game:process( delta )
 	Menu:process( delta )
 end
 
-function draw()
+function RL.draw()
 	Window:draw()
 end

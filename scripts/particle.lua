@@ -22,7 +22,7 @@ function Particle:process( delta )
 end
 
 function Particle:draw()
-	RL_DrawTexturePro(
+	RL.DrawTexturePro(
 		self.texture,
 		self.source,
 		Rect:new( self.position.x, self.position.y, self.source.width, self.source.height ),

@@ -62,8 +62,8 @@ function Player:init( pos )
 	pos.y = pos.y - 0.1 -- Tiny gap upwards to get out of floor if put right onto it.
 
 	self:setPosition( pos )
-	self.sprite = Sprite:new( Resources.textures.player, Rect:new(), Rect:new(), Vec2:new( 17, 24 ), 0.0, WHITE )
-	
+	self.sprite = Sprite:new( Resources.textures.player, Rect:new(), Rect:new(), Vec2:new( 17, 24 ), 0.0, RL.WHITE )
+
 	-- Set animations.
 	self.sprite.animations.idle = { { source = Rect:new( 1, 1, 34, 24 ), dest = Rect:new( 0, 0, 34, 24 ) } }
 	self.sprite.animations.aimUp = { { source = Rect:new( 1, 313, 34, 24 ), dest = Rect:new( 0, 0, 34, 24 ) } }
@@ -92,7 +92,7 @@ function Player:takeDamage( damage )
 
 	self.health = self.health - damage
 	self.invTimer = self.INV_TIME
-	RL_PlaySound( Resources.sounds.hit3 )
+	RL.PlaySound( Resources.sounds.hit3 )
 
 	if self.health <= 0 then
 		self:destroy()
@@ -100,13 +100,13 @@ function Player:takeDamage( damage )
 end
 
 function Player:destroy()
-	RL_PlaySound( Resources.sounds.exlosion )
+	RL.PlaySound( Resources.sounds.exlosion )
 
 	ECS:add( ECS.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		Rect:new( 2, 36, 10, 10 ),
-		WHITE,
+		RL.WHITE,
 		{ -- Emit.
 			count = 16,
 			interval = 0.02,
@@ -129,33 +129,49 @@ function Player:process( delta )
 
 	-- Inputs.
 
-	self.rightDown = RL_IsKeyDown( Settings.keys.right ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.right ) )
-	self.leftDown = RL_IsKeyDown( Settings.keys.left ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.left ) )
-	self.jumpDown = RL_IsKeyDown( Settings.keys.jump ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.jump ) )
-	self.shootPressed = RL_IsKeyPressed( Settings.keys.shoot ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
-	self.upDown = RL_IsKeyDown( Settings.keys.up ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.up ) )
-	self.diagonalDown = RL_IsKeyDown( Settings.keys.diagonal ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonDown( Settings.gamepad, Settings.buttons.diagonal ) )
+	self.rightDown = RL.IsKeyDown( Settings.keys.right )
+	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.right ) )
+
+	self.leftDown = RL.IsKeyDown( Settings.keys.left )
+	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.left ) )
+
+	self.jumpDown = RL.IsKeyDown( Settings.keys.jump )
+	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.jump ) )
+
+	self.shootPressed = RL.IsKeyPressed( Settings.keys.shoot )
+	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
+
+	self.upDown = RL.IsKeyDown( Settings.keys.up )
+	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.up ) )
+
+	self.diagonalDown = RL.IsKeyDown( Settings.keys.diagonal )
+	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.diagonal ) )
 
 	-- Prevent eating inputs on high frame rates. Set self.jumpPressed to false when input is handled.
 	if not self.jumpPressed then
-		self.jumpPressed = RL_IsKeyPressed( Settings.keys.jump ) or ( Settings.gamepad ~= nil and RL_IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.jump ) )
+		self.jumpPressed = RL.IsKeyPressed( Settings.keys.jump )
+		or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.jump ) )
 	end
-	
+
+	local moving = ( self.velocity.x < -0.1 or 0.1 < self.velocity.x )
+
 	-- Aim.
 
 	self.aim = self.AIM.FRONT
 
-	if self.upDown and self.onFloor then
-		self.aim = self.AIM.UP
-	elseif self.diagonalDown and self.onFloor then
-		self.aim = self.AIM.DIAGONAL
+	if self.onFloor and not moving then
+		if self.upDown then
+			self.aim = self.AIM.UP
+		elseif self.diagonalDown then
+			self.aim = self.AIM.DIAGONAL
+		end
 	end
 
 	-- Shoot.
 
 	if self.shootPressed then
-		local pos
-		local vel
+		local pos = Vec2:new()
+		local vel = Vec2:new()
 
 		if self.aim == self.AIM.UP then
 			pos = self.position + Vec2:new( 0, self.gunPosition.y )
@@ -169,8 +185,8 @@ function Player:process( delta )
 		end
 
 		ECS:add( ECS.bullets, Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
-		RL_SetSoundPitch( Resources.sounds.shoot, 0.9 + math.random() * 0.2 )
-		RL_PlaySound( Resources.sounds.shoot )
+		RL.SetSoundPitch( Resources.sounds.shoot, 0.9 + math.random() * 0.2 )
+		RL.PlaySound( Resources.sounds.shoot )
 	end
 
 	-- Inv timer.
@@ -187,7 +203,8 @@ function Player:process( delta )
 
 	-- Animation.
 
-	if self.onFloor and ( self.velocity.x < -0.1 or 0.1 < self.velocity.x ) then
+	-- if self.onFloor and ( self.velocity.x < -0.1 or 0.1 < self.velocity.x ) then
+	if self.onFloor and moving then
 		self.sprite.animation = "walk"
 		self.sprite:playAnimation( math.abs( self.velocity.x ) * self.WALK_ANIM_SPEED * delta )
 	elseif not self.onFloor then
@@ -250,22 +267,23 @@ function Player:physicsProcess( delta, step )
 	end
 
 	-- Double jump.
-	if self.jumpPressed and not self.onFloor and self.doubleJump and not self.usedDoubleJump and step == 0 then
+	if self.jumpPressed and not self.onFloor and self.doubleJump and not self.usedDoubleJump then
 		self.velocity.y = -self.JUMP_SPEED
 		self.onFloor = false
 		self.usedDoubleJump = true
 		self.jumpSustain = self.JUMP_SUSTAIN_MAX / 2
 		self.jumpPressed = false
-		RL_PlaySound( Resources.sounds.jump )
+		RL.PlaySound( Resources.sounds.jump )
 	end
 
 	-- Main jump.
-	if self.jumpPressed and self.onFloor and step == 0 then
+	if self.jumpPressed and self.onFloor then
 		self.velocity.y = -self.JUMP_SPEED
 		self.onFloor = false
-		self.jumpPressed = false
-		RL_PlaySound( Resources.sounds.jump )
+		RL.PlaySound( Resources.sounds.jump )
 	end
+
+	self.jumpPressed = false
 
 	-- Deaccelerate.
 	if not moving[1] then
@@ -278,7 +296,7 @@ function Player:physicsProcess( delta, step )
 		end
 	end
 
-	self.velocity.x = util.clamp( self.velocity.x, -self.MAXSPEED * delta, self.MAXSPEED * delta )
+	self.velocity.x = Util.clamp( self.velocity.x, -self.MAXSPEED * delta, self.MAXSPEED * delta )
 	self.velocity.y = self.velocity.y + Room.GRAVITY * delta
 
 	-- Drop from platform.
@@ -286,6 +304,7 @@ function Player:physicsProcess( delta, step )
 		self.onFloor = false
 	end
 
+	-- Store velocity before Room.tileCollision will change it.
 	local landVel = self.velocity.y
 
 	-- Stop on ceiling.
@@ -300,15 +319,17 @@ function Player:physicsProcess( delta, step )
 		self.jumpSustain = self.JUMP_SUSTAIN_MAX
 		self.usedDoubleJump = false
 
-		if 1.5 < landVel and step == 0 then
-			RL_SetSoundVolume( Resources.sounds.land, 0.2 )
-			RL_PlaySound( Resources.sounds.land )
+		-- if 1.5 < landVel and step == 0 then
+		if 1.5 < landVel then
+			-- print( "Landed", step )
+			RL.SetSoundVolume( Resources.sounds.land, 0.2 )
+			RL.PlaySound( Resources.sounds.land )
 		end
 	end
 
 	self.sprite.HFacing = self.facing
 	self:setPosition( self.position + self.velocity )
-	
+
 	Camera:setPosition( self.position )
 end
 
@@ -319,7 +340,7 @@ function Player:draw()
 		end
 	end
 
-	-- RL_DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
+	-- RL.DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
 end
 
 Player = Player:new()

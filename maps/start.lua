@@ -1,7 +1,7 @@
 return {
-  version = "1.9",
+  version = "1.10",
   luaversion = "5.1",
-  tiledversion = "1.9.2",
+  tiledversion = "1.10.0",
   class = "",
   orientation = "orthogonal",
   renderorder = "right-down",
@@ -196,7 +196,7 @@ return {
       type = "objectgroup",
       draworder = "topdown",
       id = 3,
-      name = "ECS",
+      name = "Entities",
       class = "",
       visible = true,
       opacity = 1,
@@ -205,11 +205,11 @@ return {
       parallaxx = 1,
       parallaxy = 1,
       properties = {},
-      ECS = {
+      objects = {
         {
           id = 22,
           name = "player",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 88,
           y = 128,

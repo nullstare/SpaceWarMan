@@ -11,7 +11,7 @@ function Map:process( delta )
 end
 
 function Map:draw()
-	RL_DrawTexture( Resources.textures.mockup, { 0, 0 }, WHITE )
+	RL.DrawTexture( Resources.textures.mockup, { 0, 0 }, RL.WHITE )
 end
 
 Map = Map:new()

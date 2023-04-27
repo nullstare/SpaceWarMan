@@ -6,7 +6,7 @@ Window.FRAMEBUFFER_SIZE = Vec2:new( 320, 256 )
 function Window:new()
 	local object = setmetatable( {}, self )
 
-	object.monitorCount = RL_GetMonitorCount()
+	object.monitorCount = RL.GetMonitorCount()
 	object.monitorPos = {}
 	object.monitorSize = {}
 	object.size = {}
@@ -17,12 +17,12 @@ function Window:new()
 end
 
 function Window:init()
-	RL_SetWindowTitle( "Space War Man" )
-	RL_SetWindowIcon( RL_LoadImage( RL_GetBasePath().."icon.png" ) )
-	self.monitorPos = Vec2:new( RL_GetMonitorPosition( Settings.window.monitor ) )
-	self.monitorSize = Vec2:new( RL_GetMonitorSize( Settings.window.monitor ) )
+	RL.SetWindowTitle( "Space War Man" )
+	RL.SetWindowIcon( RL.LoadImage( RL.GetBasePath().."icon.png" ) )
+	self.monitorPos = Vec2:new( RL.GetMonitorPosition( Settings.window.monitor ) )
+	self.monitorSize = Vec2:new( RL.GetMonitorSize( Settings.window.monitor ) )
 	self.size = self.FRAMEBUFFER_SIZE:clone()
-	self.framebuffer = RL_LoadRenderTexture( self.FRAMEBUFFER_SIZE )
+	self.framebuffer = RL.LoadRenderTexture( self.FRAMEBUFFER_SIZE )
 	self:setFullscreen( Settings.window.fullscreen )
 	self:adjustFramebuffer()
 	self:updateVSync()
@@ -38,34 +38,37 @@ function Window:setFullscreen( fullscreen )
 	Settings.window.fullscreen = fullscreen
 
 	if Settings.window.fullscreen then
-		RL_ClearWindowState( FLAG_WINDOW_RESIZABLE )
-		RL_SetWindowState( FLAG_WINDOW_UNDECORATED )
-		RL_SetWindowState( FLAG_WINDOW_TOPMOST )
-		RL_SetWindowSize( self.monitorSize )
-		RL_SetWindowPosition( self.monitorPos )
-		RL_HideCursor()
+		RL.ClearWindowState( RL.FLAG_WINDOW_RESIZABLE )
+		RL.SetWindowState( RL.FLAG_WINDOW_UNDECORATED )
+		RL.SetWindowState( RL.FLAG_WINDOW_TOPMOST )
+		RL.SetWindowSize( self.monitorSize )
+		RL.SetWindowPosition( self.monitorPos )
+		RL.HideCursor()
 	else
 		self.size = self.FRAMEBUFFER_SIZE:scale( Settings.window.scale )
 
-		RL_ClearWindowState( FLAG_WINDOW_UNDECORATED )
-		RL_ClearWindowState( FLAG_WINDOW_TOPMOST )
-		RL_SetWindowState( FLAG_WINDOW_RESIZABLE )
-		RL_SetWindowSize( self.size )
-		RL_SetWindowPosition( { self.monitorPos.x + self.monitorSize.x / 2 - self.size.x / 2,
+		RL.ClearWindowState( RL.FLAG_WINDOW_UNDECORATED )
+		RL.ClearWindowState( RL.FLAG_WINDOW_TOPMOST )
+		RL.SetWindowState( RL.FLAG_WINDOW_RESIZABLE )
+		RL.SetWindowSize( self.size )
+		-- RL.GetScreenSize( self.size )
+		RL.SetWindowPosition( { self.monitorPos.x + self.monitorSize.x / 2 - self.size.x / 2,
 							    self.monitorPos.y + self.monitorSize.y / 2 - self.size.y / 2 } )
-		RL_ShowCursor()
+		RL.ShowCursor()
 	end
 end
 
 function Window:updateVSync()
 	if Settings.window.vsync then
-		RL_SetWindowState( FLAG_VSYNC_HINT )
+		RL.SetWindowState( RL.FLAG_VSYNC_HINT )
+	else
+		RL.ClearWindowState( RL.FLAG_VSYNC_HINT )
 	end
 end
 
 function Window:process( delta )
-	if RL_IsWindowResized() then
-		self.size = Vec2:new( RL_GetWindowSize() )
+	if RL.IsWindowResized() then
+		self.size = Vec2:new( RL.GetScreenSize() )
 		self:adjustFramebuffer()
 	end
 end
@@ -73,27 +76,39 @@ end
 function Window:draw()
 	Room:updateFramebuffer()
 
-	RL_BeginTextureMode( self.framebuffer )
-		RL_ClearBackground( BLACK )
+	RL.BeginTextureMode( self.framebuffer )
+		RL.ClearBackground( RL.BLACK )
 		Game:draw()
 		Menu:draw()
-	RL_EndTextureMode()
-		
-	RL_ClearBackground( BLACK )
-	RL_SetTextureSource( TEXTURE_SOURCE_RENDER_TEXTURE )
+	RL.EndTextureMode()
 
-	RL_DrawTexturePro(
+	RL.ClearBackground( RL.BLACK )
+	RL.SetTextureSource( RL.TEXTURE_SOURCE_RENDER_TEXTURE )
+
+	RL.DrawTexturePro(
 		self.framebuffer,
 		{ 0, 0, self.FRAMEBUFFER_SIZE.x, -self.FRAMEBUFFER_SIZE.y },
 		{ self.framebufferRect.x, self.framebufferRect.y, self.framebufferRect.width, self.framebufferRect.height },
 		{ 0, 0 },
 		0.0,
-		WHITE
+		RL.WHITE
 	)
 
-	RL_SetTextureSource( TEXTURE_SOURCE_TEXTURE )
+	-- RL.glBlitFramebuffer(
+	-- 	self.framebuffer,
+	-- 	-1,
+	-- 	{ 0, 0, self.FRAMEBUFFER_SIZE.x, self.FRAMEBUFFER_SIZE.y },
+	-- 	-- { 0, 0, self.size.x, self.size.y },
+	-- 	{ self.framebufferRect.x, self.framebufferRect.y, self.framebufferRect.width, self.framebufferRect.height },
+	-- 	RL.GL_COLOR_BUFFER_BIT,
+	-- 	RL.GL_NEAREST
+	-- )
 
-	RL_DrawFPS( { 5, 5 } )
+	RL.SetTextureSource( RL.TEXTURE_SOURCE_TEXTURE )
+
+	if Settings.debug.showFPS then
+		RL.DrawFPS( { 5, 5 } )
+	end
 end
 
 Window = Window:new()

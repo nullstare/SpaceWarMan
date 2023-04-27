@@ -1,7 +1,7 @@
 return {
-  version = "1.9",
+  version = "1.10",
   luaversion = "5.1",
-  tiledversion = "1.9.2",
+  tiledversion = "1.10.0",
   class = "",
   orientation = "orthogonal",
   renderorder = "right-down",
@@ -208,7 +208,7 @@ return {
       type = "objectgroup",
       draworder = "topdown",
       id = 3,
-      name = "ECS",
+      name = "Entities",
       class = "",
       visible = true,
       opacity = 1,
@@ -217,11 +217,11 @@ return {
       parallaxx = 1,
       parallaxy = 1,
       properties = {},
-      ECS = {
+      objects = {
         {
           id = 5,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 216,
           y = 216,
@@ -237,7 +237,7 @@ return {
         {
           id = 15,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 168,
           y = 216,
@@ -253,7 +253,7 @@ return {
         {
           id = 16,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 176,
           y = 272,
@@ -269,7 +269,7 @@ return {
         {
           id = 17,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 232,
           y = 488,
@@ -285,7 +285,7 @@ return {
         {
           id = 18,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 72,
           y = 472,
@@ -301,7 +301,7 @@ return {
         {
           id = 19,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 88,
           y = 360,
@@ -317,7 +317,7 @@ return {
         {
           id = 20,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 112,
           y = 488,
@@ -333,7 +333,7 @@ return {
         {
           id = 21,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 96,
           y = 224,
@@ -349,7 +349,7 @@ return {
         {
           id = 22,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 152,
           y = 80,
@@ -365,7 +365,7 @@ return {
         {
           id = 23,
           name = "doubleJump",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 33,
           y = 448,

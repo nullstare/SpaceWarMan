@@ -16,7 +16,7 @@ function DoubleJump:new( pos )
 	object.position = Vec2:new( pos.x + 4, pos.y )
 	object.colRect = Rect:new( pos.x, pos.y - 8, 14, 8 )
 
-	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 4, 8 ), 0.0, WHITE )
+	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 4, 8 ), 0.0, RL.WHITE )
 	object.sprite.animations = object.ANIMATIONS
 	object.sprite.animation = "idle"
 
@@ -28,10 +28,10 @@ function DoubleJump:destroy()
 end
 
 function DoubleJump:process( delta )
-	if RL_CheckCollisionRecs( self.colRect, Player.colRect ) then
+	if RL.CheckCollisionRecs( self.colRect, Player.colRect ) then
 		Player.doubleJump = true
 		self:destroy()
-		RL_PlaySound( Resources.sounds.powerUp )
+		RL.PlaySound( Resources.sounds.powerUp )
 		UI:setMessage( Resources.locale.doubleJumpAcquired )
 	end
 

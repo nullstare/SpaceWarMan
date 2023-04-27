@@ -28,7 +28,7 @@ function Droid:new( pos, facing )
 	object.onFloor = false
 	object.colRect = Rect:new( pos.x, pos.y, 10, 13 )
 
-	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 16 / 2, 14 ), 0.0, WHITE )
+	object.sprite = Sprite:new( Resources.textures.ObjectsAndEnemies, Rect:new(), Rect:new(), Vec2:new( 16 / 2, 14 ), 0.0, RL.WHITE )
 	object.sprite.animations = object.ANIMATIONS
 	object.sprite.animation = "idle"
 
@@ -38,7 +38,7 @@ function Droid:new( pos, facing )
 	object.hurtFrames = 0
 
 	object:setPosition( pos )
-	
+
     return object
 end
 
@@ -51,13 +51,13 @@ end
 
 function Droid:destroy()
 	ECS.enemies[ self.id ] = ECS.FREE
-	RL_PlaySound( Resources.sounds.exlosion )
+	RL.PlaySound( Resources.sounds.exlosion )
 
 	ECS:add( ECS.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		Rect:new( 2, 36, 10, 10 ),
-		WHITE,
+		RL.WHITE,
 		{ -- Emit.
 			count = 8,
 			interval = 0.01,
@@ -105,7 +105,7 @@ function Droid:process( delta )
 		self.sprite.animationPos = 0.0
 	end
 
-	if RL_CheckCollisionRecs( self.colRect, Player.colRect ) then
+	if RL.CheckCollisionRecs( self.colRect, Player.colRect ) then
 		Player:takeDamage( 1 )
 	end
 
@@ -127,10 +127,10 @@ function Droid:physicsProcess( delta, step )
 
 	if self.onFloor then
 		self.timer = self.timer - delta
-	
+
 		if self.timer <= 0.0 then
 			self.action = 1 - self.action
-	
+
 			if self.action == self.ACTIONS.JUMP then
 				self.velocity.y = -self.JUMP_SPEED.y
 				self.onFloor = false
@@ -141,7 +141,7 @@ function Droid:physicsProcess( delta, step )
 			end
 		end
 	end
-	
+
 	self.velocity.y = self.velocity.y + Room.GRAVITY * delta
 
 	-- On map edge.
@@ -161,14 +161,14 @@ end
 function Droid:draw()
 	if self.sprite ~= nil then
 		if 0 < self.hurtFrames then
-			self.sprite.tint = RED
+			self.sprite.tint = RL.RED
 			self.hurtFrames = self.hurtFrames - 1
 		end
 
 		self.sprite:draw( self.position )
 
-		self.sprite.tint = WHITE
+		self.sprite.tint = RL.WHITE
 	end
 
-	-- RL_DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
+	-- RL.DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
 end

@@ -55,18 +55,18 @@ function ParticleEmitter:process( delta )
 	while self.emitted < self.emitCount and self.emitTime <= self.timer do
 		self:add( Particle:new(
 			self.position + Vec2:new(
-				util.randomFloat( self.emitPos.min.x, self.emitPos.max.x ),
-				util.randomFloat( self.emitPos.min.y, self.emitPos.max.y )
+				Util.randomFloat( self.emitPos.min.x, self.emitPos.max.x ),
+				Util.randomFloat( self.emitPos.min.y, self.emitPos.max.y )
 			),
 			Vec2:new(
-				util.randomFloat( self.emitVel.min.x, self.emitVel.max.x ),
-				util.randomFloat( self.emitVel.min.y, self.emitVel.max.y )
+				Util.randomFloat( self.emitVel.min.x, self.emitVel.max.x ),
+				Util.randomFloat( self.emitVel.min.y, self.emitVel.max.y )
 			),
 			Vec2:new(
-				util.randomFloat( self.emitDeltaVel.min.x, self.emitDeltaVel.max.x ),
-				util.randomFloat( self.emitDeltaVel.min.y, self.emitDeltaVel.max.y )
+				Util.randomFloat( self.emitDeltaVel.min.x, self.emitDeltaVel.max.x ),
+				Util.randomFloat( self.emitDeltaVel.min.y, self.emitDeltaVel.max.y )
 			),
-			util.randomFloat( self.emitLifetime.min, self.emitLifetime.max ),
+			Util.randomFloat( self.emitLifetime.min, self.emitLifetime.max ),
 			self.texture,
 			self.source:clone(),
 			self.tint

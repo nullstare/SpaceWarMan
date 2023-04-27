@@ -23,7 +23,7 @@ function ECS:new()
 
 	object.bullets = {}
 	object.enemies = {}
-	object.emitters = {}
+	object.emitters = {} -- Particle emitters.
 	object.pickups = {}
 
     return object
@@ -75,8 +75,8 @@ function ECS:process( delta )
 end
 
 function ECS:physicsProcess( delta, step )
-	self:processPhysicsTable( self.enemies, delta, step )
 	self:processPhysicsTable( self.bullets, delta, step )
+	self:processPhysicsTable( self.enemies, delta, step )
 	self:processPhysicsTable( self.pickups, delta, step )
 end
 

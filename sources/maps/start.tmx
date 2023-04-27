@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="40" height="32" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="31">
+<map version="1.10" tiledversion="1.10.0" orientation="orthogonal" renderorder="right-down" width="40" height="32" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="31">
  <editorsettings>
   <export target="../../maps/start.lua" format="lua"/>
  </editorsettings>
@@ -121,7 +121,7 @@
 135,48,49,353,354,355,0,579,0,0,0,0,0,541,542,543,544,0,353,354,355,8,8,51,8,50,51,185,48,49,48,50,51,52,8,55,55,57,57,56
 </data>
  </layer>
- <objectgroup id="3" name="ECS">
+ <objectgroup id="3" name="Entities">
   <object id="22" name="player" gid="793" x="88" y="128" width="16" height="16"/>
  </objectgroup>
 </map>

@@ -1,7 +1,7 @@
 return {
-  version = "1.9",
+  version = "1.10",
   luaversion = "5.1",
-  tiledversion = "1.9.2",
+  tiledversion = "1.10.0",
   class = "",
   orientation = "orthogonal",
   renderorder = "right-down",
@@ -191,7 +191,7 @@ return {
       type = "objectgroup",
       draworder = "topdown",
       id = 3,
-      name = "ECS",
+      name = "Entities",
       class = "",
       visible = true,
       opacity = 1,
@@ -200,11 +200,11 @@ return {
       parallaxx = 1,
       parallaxy = 1,
       properties = {},
-      ECS = {
+      objects = {
         {
           id = 5,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 272,
           y = 168,
@@ -220,7 +220,7 @@ return {
         {
           id = 6,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 408,
           y = 152,
@@ -234,7 +234,7 @@ return {
         {
           id = 7,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 240,
           y = 168,
@@ -250,7 +250,7 @@ return {
         {
           id = 8,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 536,
           y = 152,
@@ -266,7 +266,7 @@ return {
         {
           id = 9,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 432,
           y = 152,
@@ -282,7 +282,7 @@ return {
         {
           id = 13,
           name = "droid",
-          class = "",
+          type = "",
           shape = "rectangle",
           x = 488,
           y = 168,
