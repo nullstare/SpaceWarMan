@@ -9,6 +9,7 @@ Color = require( "color" )
 -- Define global constants.
 TILE_SIZE = 8
 
+require( "scripts/input" )
 require( "scripts/settings" )
 require( "scripts/resources" )
 require( "scripts/window" )
@@ -29,6 +30,7 @@ function RL.init()
 end
 
 function RL.process( delta )
+	Input:process()
 	Window:process( delta )
 	Game:process( delta )
 	Menu:process( delta )

@@ -79,7 +79,7 @@ function utillib.utf8Sub( s, i, j )
 
 	i = utf8.offset( s, i )
 	j = utf8.offset( s, j + 1 )
-	
+
 	if i and j then
 		return s:sub( i, j - 1 )
 	elseif i then

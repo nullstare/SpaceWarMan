@@ -108,10 +108,6 @@ function Droid:process( delta )
 	if RL.CheckCollisionRecs( self.colRect, Player.colRect ) then
 		Player:takeDamage( 1 )
 	end
-
-	if self.onFloor and self.velocity.x ~= 0.0 and math.abs( self.velocity.x ) < 0.001 then
-		self.facing = self.facing * -1.0
-	end
 end
 
 function Droid:physicsProcess( delta, step )
@@ -155,6 +151,11 @@ function Droid:physicsProcess( delta, step )
 	end
 
 	Room:tileCollision( self )
+
+	if self.onFloor and self.velocity.x ~= 0.0 and math.abs( self.velocity.x ) < 0.001 then
+		self.facing = self.facing * -1.0
+	end
+
 	self:setPosition( self.position + self.velocity )
 end
 

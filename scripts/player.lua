@@ -45,15 +45,7 @@ function Player:new()
 	object.collectedEnergyTanks = {}
 	object.doubleJump = false
 	object.usedDoubleJump = false
-
-	-- Controls.
-	object.rightDown = false
-	object.leftDown = false
-	object.jumpPressed = false
-	object.jumpDown = false
-	object.shootPressed = false
-	object.upDown = false
-	object.diagonalDown = false
+	object.jumpPressed = false -- Set false in physics_process when input is handled.
 
     return object
 end
@@ -127,32 +119,6 @@ function Player:process( delta )
 		return
 	end
 
-	-- Inputs.
-
-	self.rightDown = RL.IsKeyDown( Settings.keys.right )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.right ) )
-
-	self.leftDown = RL.IsKeyDown( Settings.keys.left )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.left ) )
-
-	self.jumpDown = RL.IsKeyDown( Settings.keys.jump )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.jump ) )
-
-	self.shootPressed = RL.IsKeyPressed( Settings.keys.shoot )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
-
-	self.upDown = RL.IsKeyDown( Settings.keys.up )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.up ) )
-
-	self.diagonalDown = RL.IsKeyDown( Settings.keys.diagonal )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons.diagonal ) )
-
-	-- Prevent eating inputs on high frame rates. Set self.jumpPressed to false when input is handled.
-	if not self.jumpPressed then
-		self.jumpPressed = RL.IsKeyPressed( Settings.keys.jump )
-		or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.jump ) )
-	end
-
 	local moving = ( self.velocity.x < -0.1 or 0.1 < self.velocity.x )
 
 	-- Aim.
@@ -160,16 +126,16 @@ function Player:process( delta )
 	self.aim = self.AIM.FRONT
 
 	if self.onFloor and not moving then
-		if self.upDown then
+		if Input.down.up then
 			self.aim = self.AIM.UP
-		elseif self.diagonalDown then
+		elseif Input.down.diagonal then
 			self.aim = self.AIM.DIAGONAL
 		end
 	end
 
 	-- Shoot.
 
-	if self.shootPressed then
+	if Input.pressed.shoot then
 		local pos = Vec2:new()
 		local vel = Vec2:new()
 
@@ -236,7 +202,7 @@ function Player:physicsProcess( delta, step )
 		deaccell = self.AIR_DEACCELL
 	end
 
-	if self.rightDown then
+	if Input.down.right then
 		self.velocity.x = self.velocity.x + accell * delta
 		moving[1] = true
 
@@ -246,7 +212,7 @@ function Player:physicsProcess( delta, step )
 			end
 			self.sprite.HFlipped = false
 		end
-	elseif self.leftDown then
+	elseif Input.down.left then
 		self.velocity.x = self.velocity.x - accell * delta
 		moving[1] = true
 
@@ -259,7 +225,7 @@ function Player:physicsProcess( delta, step )
 	end
 
 	-- Jump sustain.
-	if self.jumpDown and 0 < self.jumpSustain and self.velocity.y < 0.0 then
+	if Input.down.jump and 0 < self.jumpSustain and self.velocity.y < 0.0 then
 		local force = math.min( self.JUMP_SUSTAIN_FORCE * delta, self.jumpSustain )
 
 		self.velocity.y = self.velocity.y - force

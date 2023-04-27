@@ -7,7 +7,6 @@ Menu.PAGE = {
 	GAMES = {},
 }
 Menu.ITEM_SPACING = 4
--- Menu.ITEM_START_POS = Vec2:new( 140, 128 )
 Menu.ITEM_START_POS = Vec2:new( 140, 96 )
 Menu.VOLUME_ADJUST_INCREMENT = 0.1
 
@@ -57,28 +56,13 @@ function Menu:process( delta )
 		return
 	end
 
-	local upPressed = RL.IsKeyPressed( Settings.keys.up )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.up ) )
-
-	local downPressed = RL.IsKeyPressed( Settings.keys.down )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.down ) )
-
-	local leftPressed = RL.IsKeyPressed( Settings.keys.left )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.left ) )
-
-	local rightPressed = RL.IsKeyPressed( Settings.keys.right )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.right ) )
-
-	local shootPressed = RL.IsKeyPressed( Settings.keys.shoot )
-	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
-
-	if upPressed then
+	if Input.pressed.up then
 		self.selected = self.selected - 1
 
 		if self.selected <= 0 then
 			self.selected = #self.page
 		end
-	elseif downPressed then
+	elseif Input.pressed.down then
 		self.selected = self.selected + 1
 
 		if #self.page < self.selected then
@@ -88,7 +72,7 @@ function Menu:process( delta )
 
 	local item = self.page[ self.selected ]
 
-	if shootPressed then
+	if Input.pressed.shoot then
 		if item == "start" then
 			self.run = false
 			Game:start()
@@ -108,7 +92,7 @@ function Menu:process( delta )
 			self.selected = 2
 			Settings:writeToFile()
 		end
-	elseif rightPressed then
+	elseif Input.pressed.right then
 		if item == "monitor" and Settings.window.monitor + 1 < Window.monitorCount then
 			Settings.window.monitor = Settings.window.monitor + 1
 			Window:init()
@@ -121,7 +105,7 @@ function Menu:process( delta )
 		elseif item == "master_volume" or item == "sound_volume" or item == "music_volume" then
 			adjust_volume( item, self.VOLUME_ADJUST_INCREMENT )
 		end
-	elseif leftPressed then
+	elseif Input.pressed.left then
 		if item == "monitor" and 0 < Settings.window.monitor then
 			Settings.window.monitor = Settings.window.monitor - 1
 			Window:init()
