@@ -19,7 +19,6 @@ function Input:process()
 
 		self.down[ input ] = RL.IsKeyDown( Settings.keys[ input ] )
 		or ( Settings.gamepad ~= nil and RL.IsGamepadButtonDown( Settings.gamepad, Settings.buttons[ input ] ) )
-
 	end
 
 	--[[

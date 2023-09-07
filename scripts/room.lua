@@ -248,7 +248,7 @@ function Room:drawTilemap( tilemap )
 				if 0 < tileId then
 					local tileDrawPos = Vec2:new()
 
-					-- On Tiled data, 0 is empty but also id of first tile is 0 so we adjust to that.
+					-- On Tiled data 0 is empty but also id of first tile is 0 so we adjust to that.
 					tileId = tileId - 1
 
 					tileDrawPos.y = math.floor( tileId / self.tileTextureTileSize.x ) 
@@ -288,8 +288,6 @@ function Room:updateFramebuffer()
 end
 
 function Room:draw()
-	RL.SetTextureSource( RL.TEXTURE_SOURCE_RENDER_TEXTURE )
-
 	RL.DrawTexturePro(
 		self.tilemapFramebuffer,
 		{ 0, 0, self.TILE_FRAMEBUFFER_SIZE.x, -self.TILE_FRAMEBUFFER_SIZE.y },
@@ -298,8 +296,6 @@ function Room:draw()
 		0.0,
 		RL.WHITE
 	)
-
-	RL.SetTextureSource( RL.TEXTURE_SOURCE_TEXTURE )
 end
 
 Room = Room:new()

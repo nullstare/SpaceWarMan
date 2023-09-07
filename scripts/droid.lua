@@ -71,7 +71,7 @@ function Droid:destroy()
 	local dropRoll = math.random()
 
 	if dropRoll < 0.3 then
-		ECS:add( ECS.pickups, Health:new( self.position, Vec2:new() ) )
+		ECS:add( ECS.pickups, Health:new( self.position ) )
 	end
 end
 

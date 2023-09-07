@@ -64,6 +64,11 @@ function Game:draw()
 	RL.EndMode2D()
 
 	UI:draw()
+
+	-- Dim game while in menu.
+	if Menu.run then
+		RL.DrawRectangle( { 0, 0, Window.FRAMEBUFFER_SIZE.x, Window.FRAMEBUFFER_SIZE.y }, { 0, 0, 0, 170 } )
+	end
 end
 
 Game = Game:new()

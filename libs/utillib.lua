@@ -42,25 +42,25 @@ function utillib.clamp( val, min, max )
 end
 
 -- Returns changed value ( value to be changed, index, state( bool ) )
-function utillib.setBit( v, i, b )
-	if b then
-		return v | 1 << i
-	else 
-		return v & ~( 1 << i )
-	end
-end
+-- function utillib.setBit( v, i, b )
+-- 	if b then
+-- 		return v | 1 << i
+-- 	else 
+-- 		return v & ~( 1 << i )
+-- 	end
+-- end
 
-function utillib.toggleBit( v, i )
-	return v ~ ( 1 << i )
-end
+-- function utillib.toggleBit( v, i )
+-- 	return v ~ ( 1 << i )
+-- end
 
-function utillib.getBit( v, i )
-	if v == nil then
-		return false
-	end
+-- function utillib.getBit( v, i )
+-- 	if v == nil then
+-- 		return false
+-- 	end
 
-	return v & ( 1 << i ) > 0
-end
+-- 	return v & ( 1 << i ) > 0
+-- end
 
 function utillib.utf8Sub( s, i, j )
 	i = i or 1
@@ -90,7 +90,8 @@ function utillib.utf8Sub( s, i, j )
 end
 
 function utillib.round( v )
-	return math.tointeger( v + 0.5 - ( v + 0.5 ) % 1 )
+	-- return math.tointeger( v + 0.5 - ( v + 0.5 ) % 1 )
+	return v + 0.5 - ( v + 0.5 ) % 1
 end
 
 -- Use with dictionary style tables.

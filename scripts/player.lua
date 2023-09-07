@@ -169,7 +169,6 @@ function Player:process( delta )
 
 	-- Animation.
 
-	-- if self.onFloor and ( self.velocity.x < -0.1 or 0.1 < self.velocity.x ) then
 	if self.onFloor and moving then
 		self.sprite.animation = "walk"
 		self.sprite:playAnimation( math.abs( self.velocity.x ) * self.WALK_ANIM_SPEED * delta )
@@ -253,10 +252,12 @@ function Player:physicsProcess( delta, step )
 
 	-- Deaccelerate.
 	if not moving[1] then
-		if self.velocity.x < -deaccell * delta then
-			self.velocity.x = self.velocity.x + deaccell * delta
-		elseif deaccell * delta < self.velocity.x then
-			self.velocity.x = self.velocity.x - deaccell * delta
+		local deaccellDelta = deaccell * delta
+
+		if self.velocity.x < -deaccellDelta then
+			self.velocity.x = self.velocity.x + deaccellDelta
+		elseif deaccellDelta < self.velocity.x then
+			self.velocity.x = self.velocity.x - deaccellDelta
 		else
 			self.velocity.x = 0.0
 		end

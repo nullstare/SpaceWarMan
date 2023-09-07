@@ -83,7 +83,6 @@ function Window:draw()
 	RL.EndTextureMode()
 
 	RL.ClearBackground( RL.BLACK )
-	RL.SetTextureSource( RL.TEXTURE_SOURCE_RENDER_TEXTURE )
 
 	RL.DrawTexturePro(
 		self.framebuffer,
@@ -103,8 +102,6 @@ function Window:draw()
 	-- 	RL.GL_COLOR_BUFFER_BIT,
 	-- 	RL.GL_NEAREST
 	-- )
-
-	RL.SetTextureSource( RL.TEXTURE_SOURCE_TEXTURE )
 
 	if Settings.debug.showFPS then
 		RL.DrawFPS( { 5, 5 } )
