@@ -83,4 +83,7 @@ function Health:draw()
 			self.sprite:draw( self.position )
 		end
 	end
+	if Settings.debug.showHitboxes then
+		RL.DrawRectangleLines( self.colRect, RL.GREEN )
+	end
 end

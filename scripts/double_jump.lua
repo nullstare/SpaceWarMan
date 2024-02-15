@@ -42,4 +42,7 @@ function DoubleJump:draw()
 	if self.sprite ~= nil then
 		self.sprite:draw( self.position )
 	end
+	if Settings.debug.showHitboxes then
+		RL.DrawRectangleLines( self.colRect, RL.GREEN )
+	end
 end

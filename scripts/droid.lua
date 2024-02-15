@@ -169,5 +169,7 @@ function Droid:draw()
 
 		self.sprite.tint = RL.WHITE
 	end
-	-- RL.DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
+	if Settings.debug.showHitboxes then
+		RL.DrawRectangleLines( self.colRect, RL.GREEN )
+	end
 end

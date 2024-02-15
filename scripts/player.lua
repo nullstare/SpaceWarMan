@@ -308,7 +308,9 @@ function Player:draw()
 			self.sprite:draw( self.position )
 		end
 	end
-	-- RL.DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
+	if Settings.debug.showHitboxes then
+		RL.DrawRectangleLines( self.colRect, RL.GREEN )
+	end
 end
 
 Player = Player:new()

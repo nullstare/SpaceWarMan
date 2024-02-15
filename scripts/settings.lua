@@ -40,6 +40,7 @@ function Settings:new()
 	}
 	object.debug = {
 		showFPS = false,
+		showHitboxes = false,
 	}
 
     return object
@@ -116,7 +117,8 @@ function Settings:writeToFile()
 
 	-- Debug
 	file:write( "debug={\n" )
-	file:write( "showFPS="..tostring( Settings.debug.showFPS ).."\n" )
+	file:write( "showFPS="..tostring( Settings.debug.showFPS )..",\n" )
+	file:write( "showHitboxes="..tostring( Settings.debug.showHitboxes )..",\n" )
 	file:write( "},\n" )
 
 	-- Close settings.
