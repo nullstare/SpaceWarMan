@@ -19,7 +19,7 @@ function ParticleEmitter:new( position, texture, source, tint, emit )
 	object.emitPos = emit.pos
 	object.emitVel = emit.vel -- Initial velocity.
 	object.emitDeltaVel = emit.deltaVel -- Velocity change over time.
-	object.emitRot = emit.rot -- Initila rotation,
+	object.emitRot = emit.rot -- Initial rotation,
 	object.emitDeltaRot = emit.deltaRot	-- Rotation over time.
 	object.emitLifetime = emit.lifetime
 
@@ -79,7 +79,7 @@ function ParticleEmitter:process( delta )
 end
 
 function ParticleEmitter:destroy()
-	ECS.emitters[ self.id ] = ECS.FREE
+	Entities.emitters[ self.id ] = Entities.FREE
 end
 
 function ParticleEmitter:draw()

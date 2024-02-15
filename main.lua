@@ -20,9 +20,11 @@ require( "scripts/room" )
 require( "scripts/camera" )
 require( "scripts/sprite" )
 require( "scripts/player" )
-require( "scripts/ECS" )
+require( "scripts/entities" )
 
 function RL.init()
+	RL.InitAudioDevice()
+
 	Settings:init()
 	Resources:init()
 	Window:init()
@@ -38,4 +40,8 @@ end
 
 function RL.draw()
 	Window:draw()
+end
+
+function RL.exit()
+	RL.CloseAudioDevice()
 end

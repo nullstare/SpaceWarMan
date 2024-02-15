@@ -51,7 +51,7 @@ function Window:setFullscreen( fullscreen )
 		RL.ClearWindowState( RL.FLAG_WINDOW_TOPMOST )
 		RL.SetWindowState( RL.FLAG_WINDOW_RESIZABLE )
 		RL.SetWindowSize( self.size )
-		-- RL.GetScreenSize( self.size )
+		RL.GetScreenSize()
 		RL.SetWindowPosition( { self.monitorPos.x + self.monitorSize.x / 2 - self.size.x / 2,
 							    self.monitorPos.y + self.monitorSize.y / 2 - self.size.y / 2 } )
 		RL.ShowCursor()
@@ -85,23 +85,13 @@ function Window:draw()
 	RL.ClearBackground( RL.BLACK )
 
 	RL.DrawTexturePro(
-		self.framebuffer,
+		RL.GetRenderTextureTexture( self.framebuffer ),
 		{ 0, 0, self.FRAMEBUFFER_SIZE.x, -self.FRAMEBUFFER_SIZE.y },
 		{ self.framebufferRect.x, self.framebufferRect.y, self.framebufferRect.width, self.framebufferRect.height },
 		{ 0, 0 },
 		0.0,
 		RL.WHITE
 	)
-
-	-- RL.glBlitFramebuffer(
-	-- 	self.framebuffer,
-	-- 	-1,
-	-- 	{ 0, 0, self.FRAMEBUFFER_SIZE.x, self.FRAMEBUFFER_SIZE.y },
-	-- 	-- { 0, 0, self.size.x, self.size.y },
-	-- 	{ self.framebufferRect.x, self.framebufferRect.y, self.framebufferRect.width, self.framebufferRect.height },
-	-- 	RL.GL_COLOR_BUFFER_BIT,
-	-- 	RL.GL_NEAREST
-	-- )
 
 	if Settings.debug.showFPS then
 		RL.DrawFPS( { 5, 5 } )

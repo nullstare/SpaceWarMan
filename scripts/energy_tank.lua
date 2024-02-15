@@ -26,7 +26,7 @@ function EnergyTank:new( pos, name )
 end
 
 function EnergyTank:destroy()
-	ECS.pickups[ self.id ] = ECS.FREE
+	Entities.pickups[ self.id ] = Entities.FREE
 end
 
 function EnergyTank:process( delta )
@@ -36,7 +36,7 @@ function EnergyTank:process( delta )
 		Player.health = Player.health + Player.TANK_HEALTH
 		self:destroy()
 		RL.PlaySound( Resources.sounds.powerUp )
-		UI:setMessage( Resources.locale.energyTankAcquired )
+		UI:setMessage( Resources.language.energyTankAcquired )
 	end
 
 	self.sprite:playAnimation( self.ANIM_SPEED * delta )
@@ -46,6 +46,4 @@ function EnergyTank:draw()
 	if self.sprite ~= nil then
 		self.sprite:draw( self.position )
 	end
-
-	-- RL.DrawRectangle( self.colRect, { 0, 255, 0, 50 } )
 end

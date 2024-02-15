@@ -4,7 +4,7 @@ Settings.__index = Settings
 function Settings:new()
 	local object = setmetatable( {}, self )
 
-	object.locale = "en"
+	object.language = 1
 	object.gamepad = nil
 	object.window = {
 		monitor = 0,
@@ -13,9 +13,9 @@ function Settings:new()
 		vsync = true,
 	}
 	object.audio = {
-		master_volume = 1.0,
-		sound_volume = 1.0,
-		music_volume = 1.0,
+		masterVolume = 1.0,
+		soundVolume = 1.0,
+		musicVolume = 1.0,
 	}
 	object.keys = {
 		exit = RL.KEY_F8,
@@ -61,7 +61,7 @@ function Settings:init()
 
 	local confFile = dofile( path )
 
-	self.locale = confFile.locale
+	self.language = confFile.language
 	self.window = confFile.window
 	self.audio = confFile.audio
 	self.keys = confFile.keys
@@ -76,8 +76,8 @@ function Settings:writeToFile()
 		return
 	end
 
-	-- Locale.
-	file:write( "return{\nlocale='"..Settings.locale.."',\n" )
+	-- language.
+	file:write( "return{\nlanguage="..Settings.language..",\n" )
 
 	-- Window.
 	file:write( "window={\n" )
@@ -90,9 +90,9 @@ function Settings:writeToFile()
 
 	-- Audio.
 	file:write( "audio={\n" )
-	file:write( "master_volume="..Settings.audio.master_volume..",\n" )
-	file:write( "sound_volume="..Settings.audio.sound_volume..",\n" )
-	file:write( "music_volume="..Settings.audio.music_volume..",\n" )
+	file:write( "masterVolume="..Settings.audio.masterVolume..",\n" )
+	file:write( "soundVolume="..Settings.audio.soundVolume..",\n" )
+	file:write( "musicVolume="..Settings.audio.musicVolume..",\n" )
 
 	file:write( "},\n" )
 
@@ -125,19 +125,19 @@ function Settings:writeToFile()
 	file:close()
 end
 
-function Settings:update_master_volume()
-	RL.SetMasterVolume( self.audio.master_volume )
+function Settings:updateMasterVolume()
+	RL.SetMasterVolume( self.audio.masterVolume )
 end
 
-function Settings:update_sound_volume()
+function Settings:updateSoundVolume()
 	for _, sound in pairs( Resources.sounds ) do
-		RL.SetSoundVolume( sound, self.audio.sound_volume )
+		RL.SetSoundVolume( sound, self.audio.soundVolume )
 	end
 end
 
-function Settings:update_music_volume()
+function Settings:updateMusicVolume()
 	for _, music in pairs( Resources.music ) do
-		RL.SetMusicVolume( music, self.audio.music_volume )
+		RL.SetMusicVolume( music, self.audio.musicVolume )
 	end
 end
 

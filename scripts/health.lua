@@ -39,7 +39,7 @@ function Health:setPosition( pos )
 end
 
 function Health:destroy()
-	ECS.pickups[ self.id ] = ECS.FREE
+	Entities.pickups[ self.id ] = Entities.FREE
 end
 
 function Health:process( delta )

@@ -1,4 +1,7 @@
 return {
+	-- language.
+	en = "English",
+	fi = "Finnish",
 	-- Title.
 	spaceWarMan = "Space War Man",
 	-- Menu.
@@ -6,16 +9,20 @@ return {
 	options = "Options",
 	quit = "Quit",
 	-- Options.
+	language = "Language",
 	monitor = "Monitor",
 	scale = "Scale",
 	fullscreen = "Fullscreen",
 	vsync = "VSync",
 	showFPS = "Show FPS",
 	back = "Back",
-	master_volume = "Master Volume",
-	sound_volume = "Sound Volume",
-	music_volume = "Music Volume",
+	masterVolume = "Master Volume",
+	soundVolume = "Sound Volume",
+	musicVolume = "Music Volume",
 	-- Messages.
 	energyTankAcquired = "Energy Tank Acquired",
 	doubleJumpAcquired = "Double Jump Acquired",
+	-- Misc.
+	bool_true = "True",
+	bool_false = "False",
 }

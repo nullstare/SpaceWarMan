@@ -15,7 +15,7 @@ function utillib.deepCopy( orig )
         for origKey, origValue in next, orig, nil do
 			-- If object has clone method, use that.
 			if type( origValue ) == "table" and type( origValue.clone ) == "function" then
-				copy[ utillib.deepCopy( origKey ) ] = orig_value:clone()
+				copy[ utillib.deepCopy( origKey ) ] = origValue:clone()
 			else
 				copy[ utillib.deepCopy( origKey ) ] = utillib.deepCopy( origValue )
 			end
@@ -41,27 +41,6 @@ function utillib.clamp( val, min, max )
 	return math.max( min, math.min( val, max ) )
 end
 
--- Returns changed value ( value to be changed, index, state( bool ) )
--- function utillib.setBit( v, i, b )
--- 	if b then
--- 		return v | 1 << i
--- 	else 
--- 		return v & ~( 1 << i )
--- 	end
--- end
-
--- function utillib.toggleBit( v, i )
--- 	return v ~ ( 1 << i )
--- end
-
--- function utillib.getBit( v, i )
--- 	if v == nil then
--- 		return false
--- 	end
-
--- 	return v & ( 1 << i ) > 0
--- end
-
 function utillib.utf8Sub( s, i, j )
 	i = i or 1
 	j = j or -1
@@ -79,7 +58,7 @@ function utillib.utf8Sub( s, i, j )
 
 	i = utf8.offset( s, i )
 	j = utf8.offset( s, j + 1 )
-
+	
 	if i and j then
 		return s:sub( i, j - 1 )
 	elseif i then
@@ -90,8 +69,7 @@ function utillib.utf8Sub( s, i, j )
 end
 
 function utillib.round( v )
-	-- return math.tointeger( v + 0.5 - ( v + 0.5 ) % 1 )
-	return v + 0.5 - ( v + 0.5 ) % 1
+	return math.tointeger( v + 0.5 - ( v + 0.5 ) % 1 )
 end
 
 -- Use with dictionary style tables.
@@ -105,14 +83,14 @@ function utillib.tableLen( t )
     return count
 end
 
-function utillib.split( str, sep )
+function utillib.split( string, sep )
 	if sep == nil then
 		sep = "%s"
 	end
 
 	local t = {}
 
-	for str in string.gmatch( str, "([^"..sep.."]+)" ) do
+	for str in string.gmatch( string, "([^"..sep.."]+)" ) do
 		table.insert( t, str )
 	end
 
@@ -129,9 +107,9 @@ end
 
 function utillib.wrapAngleRad( angle )
 	if angle < 0 then
-		return math.fmod( angle, PI * 2 ) + PI * 2
+		return math.fmod( angle, RL.PI * 2 ) + RL.PI * 2
 	else
-		return math.fmod( angle, PI * 2 )
+		return math.fmod( angle, RL.PI * 2 )
 	end
 end
 
@@ -153,7 +131,7 @@ function utillib.toBoolean( v )
 	return false
 end
 
-function utillib.boo2Number( bool )
+function utillib.bool2Number( bool )
 	return bool and 1 or 0
 end
 
@@ -166,6 +144,13 @@ function utillib.printt( t )
 	end
 
 	print( "}" )
+end
+
+function utillib.colorLerp( a, b, f )
+	return {
+		utillib.round( utillib.lerp( a[1], b[1], f ) ),
+		utillib.round( utillib.lerp( a[2], b[2], f ) ),
+		utillib.round( utillib.lerp( a[3], b[3], f ) ) }
 end
 
 -- Move secuence of elements inside table.

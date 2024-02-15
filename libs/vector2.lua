@@ -3,8 +3,8 @@ if table.unpack == nil then
 	table.unpack = unpack
 end
 
-Vector2 = {}
-Vector2.meta = {
+local Vector2 = {}
+local metatable = {
 	__index = Vector2,
 	__tostring = function( v )
 		return "{"..tostring( v.x )..", "..tostring( v.y ).."}"
@@ -30,20 +30,14 @@ Vector2.meta = {
 	__unm = function( v )
 		return Vector2:new( -v.x, -v.y )
 	end,
-	-- __idiv = function( v, value )
-	-- 	return Vector2:new( v.x // value, v.y // value )
-	-- end,
-	__len = function( v )
-		local len = 0
-
-		for _, _ in pairs( v ) do
-			len = len + 1
-		end
-
-		return len
+	__len = function()
+		return 2
 	end,
 	__eq = function( v1, v2 )
 		return RL.Vector2Equals( v1, v2 ) == 1
+	end,
+	__concat = function( a, b )
+		return tostring( a )..tostring( b )
 	end,
 }
 
@@ -54,7 +48,7 @@ function Vector2:new( x, y )
 		x, y = 0, 0
 	end
 
-	local object = setmetatable( {}, Vector2.meta )
+	local object = setmetatable( {}, metatable )
 
 	object.x = x
 	object.y = y
@@ -133,6 +127,14 @@ end
 
 function Vector2:angle( v2 )
 	return RL.Vector2Angle( self, v2 )
+end
+
+function Vector2:lineAngle( v2 )
+	return RL.Vector2LineAngle( self, v2 )
+end
+
+function Vector2:atan2()
+	return math.atan( self.y, self.x )
 end
 
 function Vector2:scale( scale )

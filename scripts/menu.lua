@@ -3,7 +3,7 @@ Menu.__index = Menu
 
 Menu.PAGE = {
 	MAIN = { "start", "options", "quit" },
-	OPTIONS = { "monitor", "scale", "fullscreen", "vsync", "master_volume", "sound_volume", "music_volume", "showFPS", "back" },
+	OPTIONS = { "language", "monitor", "scale", "fullscreen", "vsync", "masterVolume", "soundVolume", "musicVolume", "showFPS", "back" },
 	GAMES = {},
 }
 Menu.ITEM_SPACING = 4
@@ -24,9 +24,9 @@ function Menu:new()
 end
 
 function Menu:init()
-	self.title = Resources.locale.spaceWarMan
+	self.title = Resources.language.spaceWarMan
 
-	local titleSize = Vec2:new( RL.MeasureText( 0, self.title, 20, 2 ) )
+	local titleSize = Vec2:new( RL.MeasureText( RL.GetFontDefault(), self.title, 20, 2 ) )
 
 	self.titleRect = Rect:new(
 		Window.FRAMEBUFFER_SIZE.x / 2 - titleSize.x / 2,
@@ -38,10 +38,19 @@ function Menu:init()
 	RL.PlayMusicStream( Resources.music.title )
 end
 
-local function adjust_volume( setting, adjust )
+local function adjustVolume( setting, adjust )
 	Settings.audio[ setting ] = Util.clamp( Settings.audio[ setting ] + adjust, 0.0, 1.0 )
-	-- A bit of a hack.
-	Settings[ "update_"..setting ]( Settings )
+	-- A bit of a hack to call settings update*Volume functions.
+	setting = setting:sub( 1, 1 ):upper()..setting:sub( 2 ) -- First char to upper.
+	Settings[ "update"..setting ]( Settings )
+end
+
+local function boolString( bool )
+	if bool then
+		return Resources.language.bool_true
+	else
+		return Resources.language.bool_false
+	end
 end
 
 function Menu:process( delta )
@@ -102,21 +111,35 @@ function Menu:process( delta )
 			if not Settings.window.fullscreen then
 				Window:init()
 			end
-		elseif item == "master_volume" or item == "sound_volume" or item == "music_volume" then
-			adjust_volume( item, self.VOLUME_ADJUST_INCREMENT )
+		elseif item == "language" then
+			Settings.language = Settings.language + 1
+
+			if #Resources.LANGUAGES < Settings.language then
+				Settings.language = 1
+			end
+			Resources:loadLanguage()
+		elseif item == "masterVolume" or item == "soundVolume" or item == "musicVolume" then
+			adjustVolume( item, self.VOLUME_ADJUST_INCREMENT )
 		end
 	elseif Input.pressed.left then
 		if item == "monitor" and 0 < Settings.window.monitor then
 			Settings.window.monitor = Settings.window.monitor - 1
 			Window:init()
+		elseif item == "language" then
+			Settings.language = Settings.language - 1
+
+			if Settings.language < 1 then
+				Settings.language = #Resources.LANGUAGES
+			end
+			Resources:loadLanguage()
 		elseif item == "scale" then
-			Settings.window.scale = Settings.window.scale - 1
+			Settings.window.scale = math.max( 1, Settings.window.scale - 1 )
 
 			if not Settings.window.fullscreen then
 				Window:init()
 			end
-		elseif item == "master_volume" or item == "sound_volume" or item == "music_volume" then
-			adjust_volume( item, -self.VOLUME_ADJUST_INCREMENT )
+		elseif item == "masterVolume" or item == "soundVolume" or item == "musicVolume" then
+			adjustVolume( item, -self.VOLUME_ADJUST_INCREMENT )
 		end
 	end
 
@@ -131,7 +154,7 @@ function Menu:draw()
 	end
 
 	-- Title.
-	RL.DrawText( 0, Resources.locale.spaceWarMan, self.titleRect, 20, 2, RL.DARKGREEN )
+	RL.DrawTextEx( RL.GetFontDefault(), Resources.language.spaceWarMan, self.titleRect, 20, 2, RL.DARKGREEN )
 
 	-- Selections.
 	local pos = self.ITEM_START_POS:clone()
@@ -143,27 +166,30 @@ function Menu:draw()
 			color = RL.GREEN
 		end
 
-		local itemText = Resources.locale[ item ]
+		local itemText = Resources.language[ item ]
 
-		if item == "monitor" then
+		if item == "language" then
+			itemText = itemText.." "..Resources.language[ Resources.LANGUAGES[ Settings.language ] ]
+		elseif item == "monitor" then
 			itemText = itemText.." "..Settings.window.monitor
 		elseif item == "scale" then
 			itemText = itemText.." "..Settings.window.scale
 		elseif item == "fullscreen" then
-			itemText = itemText.." "..tostring( Settings.window.fullscreen )
+			itemText = itemText.." "..boolString( Settings.window.fullscreen )
 		elseif item == "vsync" then
-			itemText = itemText.." "..tostring( Settings.window.vsync )
-		elseif item == "master_volume" then
-			itemText = itemText.." "..tostring( Util.round( Settings.audio.master_volume * 100 ) ).."%"
-		elseif item == "sound_volume" then
-			itemText = itemText.." "..tostring( Util.round( Settings.audio.sound_volume * 100 ) ).."%"
-		elseif item == "music_volume" then
-			itemText = itemText.." "..tostring( Util.round( Settings.audio.music_volume * 100 ) ).."%"
+			-- itemText = itemText.." "..tostring( Settings.window.vsync )
+			itemText = itemText.." "..boolString( Settings.window.vsync )
+		elseif item == "masterVolume" then
+			itemText = itemText.." "..tostring( Util.round( Settings.audio.masterVolume * 100 ) ).."%"
+		elseif item == "soundVolume" then
+			itemText = itemText.." "..tostring( Util.round( Settings.audio.soundVolume * 100 ) ).."%"
+		elseif item == "musicVolume" then
+			itemText = itemText.." "..tostring( Util.round( Settings.audio.musicVolume * 100 ) ).."%"
 		elseif item == "showFPS" then
-			itemText = itemText.." "..tostring( Settings.debug.showFPS )
+			itemText = itemText.." "..boolString( Settings.debug.showFPS )
 		end
 
-		RL.DrawText( 0, itemText, pos, UI.FONT_SIZE, UI.SPACING, color )
+		RL.DrawTextEx( RL.GetFontDefault(), itemText, pos, UI.FONT_SIZE, UI.SPACING, color )
 
 		pos.y = pos.y + UI.FONT_SIZE + self.ITEM_SPACING
 	end

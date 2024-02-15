@@ -1,10 +1,12 @@
 Resources = {}
 Resources.__index = Resources
 
+Resources.LANGUAGES = { "en", "fi" }
+
 function Resources:new()
 	local object = setmetatable( {}, self )
 
-	object.locale = {} -- Strings.
+	object.language = {} -- Strings.
 	object.textures = {}
 	object.sounds = {}
 	object.music = {}
@@ -15,7 +17,7 @@ end
 function Resources:init()
 	RL.SetExitKey( Settings.keys.exit )
 
-	self:loadLocale()
+	self:loadLanguage()
 
 	local prefix = RL.GetBasePath().."images/"
 
@@ -42,15 +44,15 @@ function Resources:init()
 	self:loadMusic( "title", prefix.."Juhani Junkala [Retro Game Music Pack] Title Screen.ogg" )
 	self:loadMusic( "level1", prefix.."Juhani Junkala [Retro Game Music Pack] Level 1.ogg" )
 
-	Settings:update_master_volume()
-	Settings:update_sound_volume()
-	Settings:update_music_volume()
+	Settings:updateMasterVolume()
+	Settings:updateSoundVolume()
+	Settings:updateMusicVolume()
 end
 
-function Resources:loadLocale()
-	local path = RL.GetBasePath().."locale/"..Settings.locale..".lua"
+function Resources:loadLanguage()
+	local path = RL.GetBasePath().."languages/"..self.LANGUAGES[ Settings.language ]..".lua"
 
-	self.locale = dofile( path )
+	self.language = dofile( path )
 end
 
 function Resources:loadTexture( name, path )

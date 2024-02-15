@@ -12,7 +12,8 @@ function Game:new()
 end
 
 function Game:start()
-	Player.inited = false
+	-- Player.inited = false
+	Player:reset()
 	Room:load( "start.lua" )
 
 	RL.PlayMusicStream( Resources.music.level1 )
@@ -21,7 +22,7 @@ end
 function Game:process( delta )
 	if self.run and not Menu.run then
 		Player:process( delta )
-		ECS:process( delta )
+		Entities:process( delta )
 		self:physicsProcess( delta )
 	end
 	-- UI needs to process even when game doesn't.
@@ -43,7 +44,7 @@ function Game:physicsProcess( delta )
 
 	for i = 0, steps - 1 do
 		Player:physicsProcess( self.physicsDelta, i )
-		ECS:physicsProcess( self.physicsDelta, i )
+		Entities:physicsProcess( self.physicsDelta, i )
 
 		self.physicsAccumulator = self.physicsAccumulator - self.physicsDelta
 	end
@@ -60,7 +61,7 @@ function Game:draw()
 	RL.BeginMode2D( Camera.camera )
 		Room:draw()
 		Player:draw()
-		ECS:draw()
+		Entities:draw()
 	RL.EndMode2D()
 
 	UI:draw()

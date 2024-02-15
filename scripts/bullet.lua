@@ -7,21 +7,21 @@ function Bullet:new( pos, vel, tex, source, origin, range )
 	object.id = 1
 	object.position = pos
 	object.velocity = vel
-	object.sprite = Sprite:new( Resources.textures.effects, source, Rect:new( pos.x, pos.y, source.width, source.height ), origin, 0.0, RL.WHITE )
+	object.sprite = Sprite:new( tex, source, Rect:new( pos.x, pos.y, source.width, source.height ), origin, 0.0, RL.WHITE )
 	object.range = range
 	object.colRect = Rect:new( pos.x + 1, pos.y + 1, source.width - 2, source.height - 2 )
 	object.damage = 1
-	object.hit = ECS.HIT.ENEMIES
+	object.hit = Entities.HIT.ENEMIES
 
     return object
 end
 
 function Bullet:destroy()
-	ECS.bullets[ self.id ] = ECS.FREE
+	Entities.bullets[ self.id ] = Entities.FREE
 end
 
 function Bullet:spawnParticles( source )
-	ECS:add( ECS.emitters, ParticleEmitter:new(
+	Entities:add( Entities.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		source,
@@ -50,9 +50,9 @@ function Bullet:physicsProcess( delta )
 	elseif Room:ifBulletCollide( self ) then
 		self:destroy()
 		self:spawnParticles( Rect:new( 3, 2, 1, 1 ) )
-	elseif self.hit == ECS.HIT.ENEMIES then
-		for _, enemy in ipairs( ECS.enemies ) do
-			if enemy ~= ECS.FREE and RL.CheckCollisionRecs( self.colRect, enemy.colRect ) then
+	elseif self.hit == Entities.HIT.ENEMIES then
+		for _, enemy in ipairs( Entities.enemies ) do
+			if enemy ~= Entities.FREE and RL.CheckCollisionRecs( self.colRect, enemy.colRect ) then
 				self:destroy()
 				enemy:takeDamage( self.damage )
 				RL.SetSoundPitch( Resources.sounds.hit, 0.7 + math.random() * 0.4 )

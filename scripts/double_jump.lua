@@ -24,7 +24,7 @@ function DoubleJump:new( pos )
 end
 
 function DoubleJump:destroy()
-	ECS.pickups[ self.id ] = ECS.FREE
+	Entities.pickups[ self.id ] = Entities.FREE
 end
 
 function DoubleJump:process( delta )
@@ -32,7 +32,7 @@ function DoubleJump:process( delta )
 		Player.doubleJump = true
 		self:destroy()
 		RL.PlaySound( Resources.sounds.powerUp )
-		UI:setMessage( Resources.locale.doubleJumpAcquired )
+		UI:setMessage( Resources.language.doubleJumpAcquired )
 	end
 
 	self.sprite:playAnimation( self.ANIM_SPEED * delta )

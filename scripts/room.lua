@@ -90,11 +90,11 @@ function Room:load( name )
 				if not Player.inited and object.name == "player" then
 					Player:init( Vec2:new( object.x + 8, object.y ) )
 				elseif object.name == "droid" then
-					ECS:add( ECS.enemies, Droid:new( Vec2:new( object.x + 8, object.y ), facing ) )
+					Entities:add( Entities.enemies, Droid:new( Vec2:new( object.x + 8, object.y ), facing ) )
 				elseif object.name == "energyTank" and Player.collectedEnergyTanks[ object.properties.name ] == nil then
-					ECS:add( ECS.pickups, EnergyTank:new( Vec2:new( object.x, object.y ), object.properties.name ) )
+					Entities:add( Entities.pickups, EnergyTank:new( Vec2:new( object.x, object.y ), object.properties.name ) )
 				elseif object.name == "doubleJump" and not Player.doubleJump then
-					ECS:add( ECS.pickups, DoubleJump:new( Vec2:new( object.x, object.y ) ) )
+					Entities:add( Entities.pickups, DoubleJump:new( Vec2:new( object.x, object.y ) ) )
 				end
 			end
 		end
@@ -110,7 +110,7 @@ function Room:clear()
 	self.bgrTiles = {}
 	self.bgrTiles2 = {}
 
-	ECS:clear()
+	Entities:clear()
 	-- Set to -1 so we will force update.
 	self.updateTilePos:set( -1, -1 )
 end
@@ -132,7 +132,7 @@ function Room:transition( direction )
 end
 
 function Room:isTileWall( pos )
-	if RL.CheckCollisionPointRec( { pos.x, pos.y }, { 0, 0, self.data.width - 1, self.data.height - 1 } ) then
+	if RL.CheckCollisionPointRec( { pos.x, pos.y }, { 0, 0, self.data.width, self.data.height } ) then
 		return 0 < self.wallTiles[ pos.x + 1 ][ pos.y + 1 ]
 	else
 		return false
@@ -289,7 +289,7 @@ end
 
 function Room:draw()
 	RL.DrawTexturePro(
-		self.tilemapFramebuffer,
+		RL.GetRenderTextureTexture( self.tilemapFramebuffer ),
 		{ 0, 0, self.TILE_FRAMEBUFFER_SIZE.x, -self.TILE_FRAMEBUFFER_SIZE.y },
 		{ self.updateTilePos.x * TILE_SIZE, self.updateTilePos.y * TILE_SIZE, self.TILE_FRAMEBUFFER_SIZE.x, self.TILE_FRAMEBUFFER_SIZE.y },
 		{ 0, 0 },

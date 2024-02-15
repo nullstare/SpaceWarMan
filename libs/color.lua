@@ -1,45 +1,49 @@
-Color = {}
-Color.meta = {
+-- For luaJit compatibility.
+if table.unpack == nil then
+	table.unpack = unpack
+end
+
+local Vector3 = require( "vector3" )
+
+local Color = {}
+local metatable = {
 	__index = Color,
-	__tostring = function( r )
-		return "{"..tostring( r.r )..", "..tostring( r.g )..", "..tostring( r.b )..", "..tostring( r.a ).."}"
+	__tostring = function( c )
+		return "{"..math.floor( c.r )..", "..math.floor( c.g )..", "..math.floor( c.b )..", "..math.floor( c.a ).."}"
 	end,
-	-- __add = function( v1, v2 )
-	-- 	return Vector2:new( v1.x + v2.x, v1.y + v2.y )
-	-- end,
-	-- __sub = function( v1, v2 )
-	-- 	return Vector2:new( v1.x - v2.x, v1.y - v2.y )
-	-- end,
-	-- __mul = function( v1, v2 )
-	-- 	return Vector2:new( v1.x * v2.x, v1.y * v2.y )
-	-- end,
-	-- __div = function( v1, v2 )
-	-- 	return Vector2:new( v1.x / v2.x, v1.y / v2.y )
-	-- end,
-	-- __mod = function( v, value )
-	-- 	return Vector2:new( math.fmod( v.x, value ), math.fmod( v.y, value ) )
-	-- end,
-	-- __pow = function( v, value )
-	-- 	return Vector2:new( v.x ^ value, v.y ^ value )
-	-- end,
-	-- __unm = function( v )
-	-- 	return Vector2:new( -v.x, -v.y )
-	-- end,
-	-- __idiv = function( v, value )
-	-- 	return Vector2:new( v.x // value, v.y // value )
-	-- end,
-	-- __len = function( v )
-	-- 	local len = 0
-
-	-- 	for _, _ in pairs( v ) do
-	-- 		len = len + 1
-	-- 	end
-
-	-- 	return len
-	-- end,
-	-- __eq = function( v1, v2 )
-	-- 	return v1.x == v2.x and v1.y == v2.y
-	-- end,
+	__add = function( c1, c2 )
+		return Color:new( c1.r + c2.r, c1.g + c2.g, c1.b + c2.b, c1.a + c2.a )
+	end,
+	__sub = function( c1, c2 )
+		return Color:new( c1.r - c2.r, c1.g - c2.g, c1.b - c2.b, c1.a - c2.a )
+	end,
+	__mul = function( c1, c2 )
+		return Color:new( c1.r * c2.r, c1.g * c2.g, c1.b * c2.b, c1.a * c2.a )
+	end,
+	__div = function( c1, c2 )
+		return Color:new( c1.r / c2.r, c1.g / c2.g, c1.b / c2.b, c1.a / c2.a )
+	end,
+	__mod = function( c, v )
+		return Color:new( c.r % v, c.g % v, c.b % v, c.a % v )
+	end,
+	__pow = function( c, v )
+		return Color:new( c.r ^ v, c.g ^ v, c.b ^ v, c.a ^ v )
+	end,
+	__idiv = function( c, v )
+		return Color:new( c.r // v, c.g // v, c.b // v, c.a // v )
+	end,
+	__len = function()
+		return 4
+	end,
+	__eq = function( c1, c2 )
+		return math.floor( c1.r ) == math.floor( c2.r )
+		and math.floor( c1.g ) == math.floor( c2.g )
+		and math.floor( c1.b ) == math.floor( c2.b )
+		and math.floor( c1.a ) == math.floor( c2.a )
+	end,
+	__concat = function( a, b )
+		return tostring( a )..tostring( b )
+	end,
 }
 
 function Color:new( r, g, b, a )
@@ -53,7 +57,7 @@ function Color:new( r, g, b, a )
 		a = 255
 	end
 
-	local object = setmetatable( {}, Color.meta )
+	local object = setmetatable( {}, metatable )
 
 	object.r = r
 	object.g = g
@@ -67,7 +71,7 @@ function Color:set( r, g, b, a )
 	if type( r ) == "table" then
 		r, g, b, a = table.unpack( r )
 	elseif type( r ) == "nil" then
-		r, g, b, a = 0, 0, 0, 0
+		r, g, b, a = 0, 0, 0, 255
 	end
 
 	if a == nil then
@@ -90,6 +94,54 @@ end
 
 function Color:clone()
 	return Color:new( self.r, self.g, self.b, self.a )
+end
+
+function Color:scale( scalar )
+	return Color:new( math.floor( self.r * scalar ), math.floor( self.g * scalar ), math.floor( self.b * scalar ), math.floor( self.a * scalar ) )
+end
+
+function Color:fade( alpha )
+	return Color:new( RL.Fade( self, alpha ) )
+end
+
+function Color:toHex()
+	return RL.ColorToInt( self )
+end
+
+function Color:fromHex( hexValue )
+	return Color:new( RL.GetColor( hexValue ) )
+end
+
+function Color:getNormalized()
+	return RL.ColorNormalize( self )
+end
+
+function Color:fromNormalized( normalized )
+	return Color:new( RL.ColorFromNormalized( normalized ) )
+end
+
+function Color:toHSV()
+	return Vector3:new( RL.ColorToHSV( self ) )
+end
+
+function Color:fromHSV( hue, saturation, value )
+	return Color:new( RL.ColorFromHSV( hue, saturation, value ) )
+end
+
+function Color:tint( tint )
+	return Color:new( RL.ColorTint( self, tint ) )
+end
+
+function Color:brightness( factor )
+	return Color:new( RL.ColorBrightness( self, factor ) )
+end
+
+function Color:contrast( contrast )
+	return Color:new( RL.ColorContrast( self, contrast ) )
+end
+
+function Color:alphaBlend( dst, src, tint )
+	return Color:new( RL.ColorAlphaBlend( dst, src, tint ) )
 end
 
 return Color

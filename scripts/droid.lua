@@ -50,10 +50,10 @@ function Droid:setPosition( pos )
 end
 
 function Droid:destroy()
-	ECS.enemies[ self.id ] = ECS.FREE
+	Entities.enemies[ self.id ] = Entities.FREE
 	RL.PlaySound( Resources.sounds.exlosion )
 
-	ECS:add( ECS.emitters, ParticleEmitter:new(
+	Entities:add( Entities.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		Rect:new( 2, 36, 10, 10 ),
@@ -67,11 +67,10 @@ function Droid:destroy()
 			lifetime = { min = 0.15, max = 0.25 },
 		}
 	) )
-
 	local dropRoll = math.random()
 
 	if dropRoll < 0.3 then
-		ECS:add( ECS.pickups, Health:new( self.position ) )
+		Entities:add( Entities.pickups, Health:new( self.position ) )
 	end
 end
 
@@ -170,6 +169,5 @@ function Droid:draw()
 
 		self.sprite.tint = RL.WHITE
 	end
-
 	-- RL.DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
 end

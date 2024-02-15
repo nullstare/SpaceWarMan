@@ -3,7 +3,6 @@ current {
 
 backlog {
 	* Another enemy.
-	* Start game could have 3 games like on Zelda. Could also show items and energy tanks.
+	* Start game could have 3 game saves like on Zelda. Could also show items and energy tanks.
 	* Save game on start room.
-	* The end after factory room.
 }

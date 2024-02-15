@@ -66,11 +66,11 @@ end
 
 function UI:drawMessage()
 	local center = Vec2:new( Window.FRAMEBUFFER_SIZE.x / 2, Window.FRAMEBUFFER_SIZE.y / 2 )
-	local textSize = Vec2:new( RL.MeasureText( 0, self.message, self.FONT_SIZE, self.SPACING ) )
+	local textSize = Vec2:new( RL.MeasureText( RL.GetFontDefault(), self.message, self.FONT_SIZE, self.SPACING ) )
 	local textRect = Rect:new( math.floor( center.x - textSize.x / 2 ), math.floor( center.y - textSize.y / 2 ), textSize.x, textSize.y )
 
 	RL.DrawRectangle( self.MESSAGE_RECT, RL.BLACK )
-	RL.DrawText( 0, self.message, textRect, self.FONT_SIZE, self.SPACING, RL.WHITE )
+	RL.DrawTextEx( RL.GetFontDefault(), self.message, textRect, self.FONT_SIZE, self.SPACING, RL.WHITE )
 end
 
 function UI:draw()

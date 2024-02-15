@@ -27,27 +27,31 @@ Player.AIM = {
 function Player:new()
 	local object = setmetatable( {}, self )
 
-	object.inited = false
-	object.position = Vec2:new()
-	object.sprite = nil
-
-	object.facing = 1
-	object.velocity = Vec2:new()
-	object.colRect = Rect:new( 0, 0, 10, 15 )
-	object.onFloor = false
-	object.jumpSustain = object.JUMP_SUSTAIN_MAX
-	object.gunPosition = Vec2:new( 4, -8 )
-	object.energyTanks = 1
-	object.health = object.TANK_HEALTH * object.energyTanks
-	object.invTimer = 0.0
-	object.aim = object.AIM.FRONT
-
-	object.collectedEnergyTanks = {}
-	object.doubleJump = false
-	object.usedDoubleJump = false
-	object.jumpPressed = false -- Set false in physics_process when input is handled.
+	object:reset()
 
     return object
+end
+
+function Player:reset()
+	self.inited = false
+	self.position = Vec2:new()
+	self.sprite = nil
+
+	self.facing = 1
+	self.velocity = Vec2:new()
+	self.colRect = Rect:new( 0, 0, 10, 15 )
+	self.onFloor = false
+	self.jumpSustain = self.JUMP_SUSTAIN_MAX
+	self.gunPosition = Vec2:new( 4, -8 )
+	self.energyTanks = 1
+	self.health = self.TANK_HEALTH * self.energyTanks
+	self.invTimer = 0.0
+	self.aim = self.AIM.FRONT
+
+	self.collectedEnergyTanks = {}
+	self.doubleJump = false
+	self.usedDoubleJump = false
+	self.jumpPressed = false -- Set false in physics_process when input is handled.
 end
 
 function Player:init( pos )
@@ -94,7 +98,7 @@ end
 function Player:destroy()
 	RL.PlaySound( Resources.sounds.exlosion )
 
-	ECS:add( ECS.emitters, ParticleEmitter:new(
+	Entities:add( Entities.emitters, ParticleEmitter:new(
 		self.position:clone(),
 		Resources.textures.effects,
 		Rect:new( 2, 36, 10, 10 ),
@@ -150,7 +154,7 @@ function Player:process( delta )
 			vel = Vec2:new( self.BULLET_SPEED * self.facing, 0 )
 		end
 
-		ECS:add( ECS.bullets, Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
+		Entities:add( Entities.bullets, Bullet:new( pos, vel, Resources.textures.effects, Rect:new( 1, 1, 8, 8 ), Vec2:new( 4, 4 ), self.BULLET_RANGE ) )
 		RL.SetSoundPitch( Resources.sounds.shoot, 0.9 + math.random() * 0.2 )
 		RL.PlaySound( Resources.sounds.shoot )
 	end
@@ -286,9 +290,7 @@ function Player:physicsProcess( delta, step )
 		self.jumpSustain = self.JUMP_SUSTAIN_MAX
 		self.usedDoubleJump = false
 
-		-- if 1.5 < landVel and step == 0 then
 		if 1.5 < landVel then
-			-- print( "Landed", step )
 			RL.SetSoundVolume( Resources.sounds.land, 0.2 )
 			RL.PlaySound( Resources.sounds.land )
 		end
@@ -306,7 +308,6 @@ function Player:draw()
 			self.sprite:draw( self.position )
 		end
 	end
-
 	-- RL.DrawRectangle( self.colRect, { 255, 100, 100, 200 } )
 end
 
