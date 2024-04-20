@@ -19,8 +19,8 @@ end
 function Window:init()
 	RL.SetWindowTitle( "Space War Man" )
 	RL.SetWindowIcon( RL.LoadImage( RL.GetBasePath().."icon.png" ) )
-	self.monitorPos = Vec2:new( RL.GetMonitorPosition( Settings.window.monitor ) )
-	self.monitorSize = Vec2:new( RL.GetMonitorSize( Settings.window.monitor ) )
+	self.monitorPos = Vec2:newT( RL.GetMonitorPosition( Settings.window.monitor ) )
+	self.monitorSize = Vec2:newT( RL.GetMonitorSize( Settings.window.monitor ) )
 	self.size = self.FRAMEBUFFER_SIZE:clone()
 	self.framebuffer = RL.LoadRenderTexture( self.FRAMEBUFFER_SIZE )
 	self:setFullscreen( Settings.window.fullscreen )
@@ -66,9 +66,9 @@ function Window:updateVSync()
 	end
 end
 
-function Window:process( delta )
+function Window:update( delta )
 	if RL.IsWindowResized() then
-		self.size = Vec2:new( RL.GetScreenSize() )
+		self.size:setT( RL.GetScreenSize() )
 		self:adjustFramebuffer()
 	end
 end

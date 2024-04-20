@@ -42,7 +42,7 @@ function Health:destroy()
 	Entities.pickups[ self.id ] = Entities.FREE
 end
 
-function Health:process( delta )
+function Health:update( delta )
 	self.sprite:playAnimation( self.ANIM_SPEED * delta )
 
 	self.lifetime = self.lifetime - delta
@@ -52,7 +52,7 @@ function Health:process( delta )
 	end
 end
 
-function Health:physicsProcess( delta, step )
+function Health:physicsUpdate( delta, step )
 	self.velocity.y = self.velocity.y + Room.GRAVITY * delta
 
 	if self.onFloor then

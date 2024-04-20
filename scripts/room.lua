@@ -37,7 +37,7 @@ function Room:load( name )
 	self:clear()
 
 	self.tileTexture = Resources.textures.tileset
-	self.tileTextureSize = Vec2:new( RL.GetTextureSize( self.tileTexture ) )
+	self.tileTextureSize = Vec2:newT( RL.GetTextureSize( self.tileTexture ) )
 	self.tileTextureTileSize = Vec2:new( self.tileTextureSize.x / TILE_SIZE, self.tileTextureSize.y / TILE_SIZE )
 	self.data = dofile( RL.GetBasePath().."maps/"..name )
 
@@ -149,7 +149,7 @@ function Room:tileCollision( entity )
 	vRect.x = vPos.x - vRect.width / 2
 
 	-- Tile range where collision box is affecting.
-	local tileRect = Rect:new(
+	local tileRect = Rect:temp(
 		math.floor( vRect.x / TILE_SIZE ),
 		math.floor( vRect.y / TILE_SIZE ),
 		math.floor( ( vRect.x + vRect.width ) / TILE_SIZE ),
@@ -158,7 +158,7 @@ function Room:tileCollision( entity )
 
 	for y = tileRect.y, tileRect.height do
 		if 0 < entity.velocity.x then
-			if self:isTileWall( Vec2:new( tileRect.width, y ) ) then
+			if self:isTileWall( Vec2:temp( tileRect.width, y ) ) then
 				-- Use new_x to push out of tile.
 				local new_x = tileRect.width * TILE_SIZE - ( entity.colRect.x + entity.colRect.width )
 
@@ -167,7 +167,7 @@ function Room:tileCollision( entity )
 				break
 			end
 		elseif entity.velocity.x < 0 then
-			if self:isTileWall( Vec2:new( tileRect.x, y ) ) then
+			if self:isTileWall( Vec2:temp( tileRect.x, y ) ) then
 				local new_x = ( tileRect.x * TILE_SIZE + TILE_SIZE ) - entity.colRect.x
 				entity.velocity.x = new_x + tinyGap
 
@@ -187,7 +187,7 @@ function Room:tileCollision( entity )
 
 	for x = tileRect.x, tileRect.width do
 		if 0 < entity.velocity.y then
-			if self:isTileWall( Vec2:new( x, tileRect.height ) ) then
+			if self:isTileWall( Vec2:temp( x, tileRect.height ) ) then
 				local new_y = tileRect.height * TILE_SIZE - ( entity.colRect.y + entity.colRect.height )
 				-- math.max prevents bounce when hitting right on the corner.
 				entity.velocity.y = math.max( new_y - tinyGap, 0 )
@@ -201,7 +201,7 @@ function Room:tileCollision( entity )
 				break
 			end
 		elseif entity.velocity.y < 0 then
-			if self:isTileWall( Vec2:new( x, tileRect.y ) ) then
+			if self:isTileWall( Vec2:temp( x, tileRect.y ) ) then
 				local new_y = ( tileRect.y * TILE_SIZE + TILE_SIZE ) - entity.colRect.y
 				entity.velocity.y = new_y + tinyGap
 
@@ -214,7 +214,7 @@ function Room:tileCollision( entity )
 end
 
 function Room:ifBulletCollide( bullet )
-	local tileRect = Rect:new(
+	local tileRect = Rect:temp(
 		math.floor( bullet.colRect.x / TILE_SIZE ),
 		math.floor( bullet.colRect.y / TILE_SIZE ),
 		math.floor( ( bullet.colRect.x + bullet.colRect.width ) / TILE_SIZE ),
@@ -223,7 +223,7 @@ function Room:ifBulletCollide( bullet )
 
 	for x = tileRect.x, tileRect.width do
 		for y = tileRect.y, tileRect.height do
-			if self:isTileWall( Vec2:new( x, y ) ) then
+			if self:isTileWall( Vec2:temp( x, y ) ) then
 				return true
 			end
 		end
@@ -232,22 +232,22 @@ function Room:ifBulletCollide( bullet )
 	return false
 end
 
-function Room:process( delta )
-end
+-- function Room:update( delta )
+-- end
 
 function Room:drawTilemap( tilemap )
 	local camTilePos = self.updateTilePos
+	local tilePos = Vec2:new()
+	local tileDrawPos = Vec2:new()
 
 	for x = 0, self.TILE_RENDER_SIZE.x do
 		for y = 0, self.TILE_RENDER_SIZE.y do
-			local tilePos = Vec2:new( x + camTilePos.x, y + camTilePos.y )
+			tilePos:set( x + camTilePos.x, y + camTilePos.y )
 
 			if tilemap[ tilePos.x ] ~= nil and tilemap[ tilePos.x ][ tilePos.y ] ~= nil then
 				local tileId = tilemap[ tilePos.x ][ tilePos.y ]
 
 				if 0 < tileId then
-					local tileDrawPos = Vec2:new()
-
 					-- On Tiled data 0 is empty but also id of first tile is 0 so we adjust to that.
 					tileId = tileId - 1
 
@@ -276,7 +276,7 @@ function Room:updateFramebuffer()
 	-- Update framebuffer.
 
 	if camTilePos ~= self.updateTilePos then
-		self.updateTilePos = camTilePos:clone()
+		self.updateTilePos = camTilePos
 
 		RL.BeginTextureMode( self.tilemapFramebuffer )
 			RL.ClearBackground( RL.BLANK )

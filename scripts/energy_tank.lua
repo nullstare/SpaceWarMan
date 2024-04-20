@@ -29,7 +29,7 @@ function EnergyTank:destroy()
 	Entities.pickups[ self.id ] = Entities.FREE
 end
 
-function EnergyTank:process( delta )
+function EnergyTank:update( delta )
 	if RL.CheckCollisionRecs( self.colRect, Player.colRect ) then
 		Player.collectedEnergyTanks[ self.name ] = true
 		Player.energyTanks = Player.energyTanks + 1

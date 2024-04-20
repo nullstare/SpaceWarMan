@@ -12,7 +12,7 @@ function Input:new()
 	return object
 end
 
-function Input:process()
+function Input:update()
 	for _, input in ipairs( self.INPUTS ) do
 		self.pressed[ input ] = RL.IsKeyPressed( Settings.keys[ input ] )
 		or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons[ input ] ) )
@@ -22,7 +22,7 @@ function Input:process()
 	end
 
 	--[[
-		Jump is handled in physics_process that will run fewer times than process on high frame rates. We will only set
+		Jump is handled in physicsUpdate that will run fewer times than update on high frame rates. We will only set
 		input true here to prevent eating inputs and will set Player.jumpPressed to false when input is handled.
 	]]--
 	if self.pressed.jump then

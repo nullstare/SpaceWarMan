@@ -44,33 +44,51 @@ Rectangle.meta = {
 }
 
 function Rectangle:new( x, y, width, height )
-	if type( x ) == "table" then
-		x, y, width, height = table.unpack( x )
-	elseif type( x ) == "nil" then
-		x, y, width, height = 0, 0, 0, 0
-	end
-
 	local object = setmetatable( {}, Rectangle.meta )
 
-	object.x = x
-	object.y = y
-	object.width = width
-	object.height = height
+	object.x = x or 0
+	object.y = y or 0
+	object.width = width or 0
+	object.height = height or 0
 
-    return object
+	return object
+end
+
+function Rectangle:newT( t )
+	local object = setmetatable( {}, Rectangle.meta )
+
+	object.x, object.y, object.width, object.height = table.unpack( t )
+
+	return object
+end
+
+function Rectangle:newR( r )
+	local object = setmetatable( {}, Rectangle.meta )
+
+	object.x = r.x
+	object.y = r.y
+	object.width = r.width
+	object.height = r.height
+
+	return object
 end
 
 function Rectangle:set( x, y, width, height )
-	if type( x ) == "table" then
-		x, y, width, height = table.unpack( x )
-	elseif type( x ) == "nil" then
-		x, y, width, height = 0, 0, 0, 0
-	end
+	self.x = x or 0
+	self.y = y or 0
+	self.width = width or 0
+	self.height = height or 0
+end
 
-	self.x = x
-	self.y = y
-	self.width = width
-	self.height = height
+function Rectangle:setT( t )
+	self.x, self.y, self.width, self.height = table.unpack( t )
+end
+
+function Rectangle:setR( r )
+	self.x = r.x
+	self.y = r.y
+	self.width = r.width
+	self.height = r.height
 end
 
 function Rectangle:arr()
@@ -109,7 +127,7 @@ function Rectangle:area()
 	return self.width * self.height
 end
 
---- Returns rectangle that fits both rectangles inside it
+-- Returns rectangle that fits both rectangles inside it
 function Rectangle:fit( rec )
 	local pos = Vector2:new( math.min( self.x, rec.x ), math.min( self.y, rec.y ) )
 
@@ -121,10 +139,20 @@ function Rectangle:fit( rec )
 	)
 end
 
---- If rectangle is fully inside another rectangle
-function Rectangle:isInside( rect )
-	return rect.x <= self.x and self.x + self.width <= rect.x + rect.width
-	and rect.y <= self.y and self.y + self.height <= rect.y + rect.height
+-- If rectangle is fully inside another rectangle
+function Rectangle:isInside( rec )
+	return rec.x <= self.x and self.x + self.width <= rec.x + rec.width
+	and rec.y <= self.y and self.y + self.height <= rec.y + rec.height
+end
+
+-- Returns clamped rectangle that is inside another rectangle.
+function Rectangle:clampInside( rec )
+	return Rectangle:new(
+		math.max( rec.x, math.min( self.x, rec.x + rec.width - self.width ) ),
+		math.max( rec.y, math.min( self.y, rec.y + rec.height - self.height ) ),
+		self.width,
+		self.height
+	)
 end
 
 function Rectangle:checkCollisionRec( rec )
@@ -141,6 +169,65 @@ end
 
 function Rectangle:getCollisionRec( rec )
 	return Rectangle:new( RL.GetCollisionRec( self, rec ) )
+end
+
+-- Temp pre generated objects to avoid "slow" table generation.
+
+local TEMP_COUNT = 100
+local tempPool = {}
+local curTemp = 1
+
+for _ = 1, TEMP_COUNT do
+	table.insert( tempPool, Rectangle:new( 0, 0, 0, 0 ) )
+end
+
+function Rectangle:temp( x, y, width, height )
+	local object = tempPool[ curTemp ]
+	curTemp = curTemp + 1
+
+	if TEMP_COUNT < curTemp then
+		curTemp = 1
+	end
+
+	object.x = x or 0
+	object.y = y or 0
+	object.width = width or 0
+	object.height = height or 0
+
+	return object
+end
+
+function Rectangle:tempT( t )
+	local object = tempPool[ curTemp ]
+	curTemp = curTemp + 1
+
+	if TEMP_COUNT < curTemp then
+		curTemp = 1
+	end
+
+	object.x, object.y, object.width, object.height = table.unpack( t )
+
+	return object
+end
+
+function Rectangle:tempR( r )
+	local object = tempPool[ curTemp ]
+	curTemp = curTemp + 1
+
+	if TEMP_COUNT < curTemp then
+		curTemp = 1
+	end
+
+	object.x = r.x
+	object.y = r.y
+	object.width = r.width
+	object.height = r.height
+
+	return object
+end
+
+function Rectangle:getTempId()
+	return curTemp
 end
 
 return Rectangle

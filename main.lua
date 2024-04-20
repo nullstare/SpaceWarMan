@@ -31,11 +31,11 @@ function RL.init()
 	Menu:init()
 end
 
-function RL.process( delta )
-	Input:process()
-	Window:process( delta )
-	Game:process( delta )
-	Menu:process( delta )
+function RL.update( delta )
+	Input:update()
+	Window:update( delta )
+	Game:update( delta )
+	Menu:update( delta )
 end
 
 function RL.draw()

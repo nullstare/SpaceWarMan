@@ -27,7 +27,7 @@ function DoubleJump:destroy()
 	Entities.pickups[ self.id ] = Entities.FREE
 end
 
-function DoubleJump:process( delta )
+function DoubleJump:update( delta )
 	if RL.CheckCollisionRecs( self.colRect, Player.colRect ) then
 		Player.doubleJump = true
 		self:destroy()

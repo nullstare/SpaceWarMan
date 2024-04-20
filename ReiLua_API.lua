@@ -8,8 +8,8 @@ RL={}
 function RL.init() end
 ---This function will be called every frame during execution. It will get time duration from last frame on argument 'delta'
 ---@param delta number
-function RL.process( delta ) end
----This function will be called every frame after process and it should have all rendering related functions. Note: Engine will call Raylib functions 'BeginDrawing()' before this function call and 'EndDrawing()' after it. You can still use RL.BeginDrawing() and RL.EndDrawing() manually from anywhere.
+function RL.update( delta ) end
+---This function will be called every frame after update and it should have all rendering related functions. Note: Engine will call Raylib functions 'BeginDrawing()' before this function call and 'EndDrawing()' after it. You can still use RL.BeginDrawing() and RL.EndDrawing() manually from anywhere.
 function RL.draw() end
 ---This function will be called on events input. Content of event table is determined by event type.
 ---@param event table
@@ -1156,15 +1156,96 @@ RL.RL_ATTACHMENT_RENDERBUFFER=200
 RL.RL_CULL_FACE_FRONT=0
 RL.RL_CULL_FACE_BACK=1
 
--- Defines - OpenGL
+-- Defines - OpenGL Bitfield mask
 
 RL.GL_COLOR_BUFFER_BIT=16384
 RL.GL_DEPTH_BUFFER_BIT=256
 RL.GL_STENCIL_BUFFER_BIT=1024
+
+-- Defines - OpenGL Texture parameter
+
 RL.GL_NEAREST=9728
 RL.GL_LINEAR=9729
 
--- Defines - CBuffer Data types
+-- Defines - OpenGL Capability
+
+---If enabled, blend the computed fragment color values with the values in the color buffers. See glBlendFunc
+RL.GL_BLEND=3042
+---If enabled, cull polygons based on their winding in window coordinates. See glCullFace
+RL.GL_CULL_FACE=2884
+---If enabled, do depth comparisons and update the depth buffer. Note that even if the depth buffer exists and the depth mask is non-zero, the depth buffer is not updated if the depth test is disabled. See glDepthFunc and glDepthRangef
+RL.GL_DEPTH_TEST=2929
+---If enabled, dither color components or indices before they are written to the color buffer
+RL.GL_DITHER=3024
+---If enabled, an offset is added to depth values of a polygon's fragments produced by rasterization. See glPolygonOffset
+RL.GL_POLYGON_OFFSET_FILL=32823
+---If enabled, compute a temporary coverage value where each bit is determined by the alpha value at the corresponding sample location. The temporary coverage value is then ANDed with the fragment coverage value
+RL.GL_SAMPLE_ALPHA_TO_COVERAGE=32926
+---If enabled, the fragment's coverage is ANDed with the temporary coverage value. If GL_SAMPLE_COVERAGE_INVERT is set to GL_TRUE, invert the coverage value. See glSampleCoverage
+RL.GL_SAMPLE_COVERAGE=32928
+---If enabled, discard fragments that are outside the scissor rectangle. See glScissor
+RL.GL_SCISSOR_TEST=3089
+---If enabled, do stencil testing and update the stencil buffer. See glStencilFunc and glStencilOp
+RL.GL_STENCIL_TEST=2960
+
+-- Defines - OpenGL Test function
+
+---Always fails
+RL.GL_NEVER=512
+---Passes if ( ref & mask ) < ( stencil & mask )
+RL.GL_LESS=513
+---Passes if ( ref & mask ) <= ( stencil & mask )
+RL.GL_LEQUAL=515
+---Passes if ( ref & mask ) > ( stencil & mask )
+RL.GL_GREATER=516
+---Passes if ( ref & mask ) >= ( stencil & mask )
+RL.GL_GEQUAL=518
+---Passes if ( ref & mask ) = ( stencil & mask )
+RL.GL_EQUAL=514
+---Passes if ( ref & mask ) != ( stencil & mask )
+RL.GL_NOTEQUAL=517
+---Always passes
+RL.GL_ALWAYS=519
+
+-- Defines - OpenGL Face
+
+RL.GL_FRONT=1028
+RL.GL_BACK=1029
+RL.GL_FRONT_AND_BACK=1032
+
+-- Defines - OpenGL Stencil test
+
+---Keeps the current value
+RL.GL_KEEP=7680
+---Sets the stencil buffer value to 0
+RL.GL_ZERO=0
+---Sets the stencil buffer value to ref, as specified by glStencilFunc
+RL.GL_REPLACE=7681
+---Increments the current stencil buffer value. Clamps to the maximum representable unsigned value
+RL.GL_INCR=7682
+---Increments the current stencil buffer value. Wraps stencil buffer value to zero when incrementing the maximum representable unsigned value
+RL.GL_INCR_WRAP=34055
+---Decrements the current stencil buffer value. Clamps to 0
+RL.GL_DECR=7683
+---Decrements the current stencil buffer value. Wraps stencil buffer value to the maximum representable unsigned value when decrementing a stencil buffer value of zero
+RL.GL_DECR_WRAP=34056
+---Bitwise inverts the current stencil buffer value
+RL.GL_INVERT=5386
+
+-- Defines - OpenGL Connection
+
+---Returns the company responsible for this GL implementation. This name does not change from release to release
+RL.GL_VENDOR=7936
+---Returns the name of the renderer. This name is typically specific to a particular configuration of a hardware platform. It does not change from release to release
+RL.GL_RENDERER=7937
+---Returns a version or release number of the form OpenGLES
+RL.GL_VERSION=7938
+---Returns a version or release number for the shading language of the form OpenGLESGLSLES
+RL.GL_SHADING_LANGUAGE_VERSION=35724
+---Returns a space-separated list of supported extensions to GL
+RL.GL_EXTENSIONS=7939
+
+-- Defines - CBuffer Data type
 
 ---C type unsigned char
 RL.BUFFER_UNSIGNED_CHAR=0
@@ -1441,6 +1522,14 @@ function  RL.SetClipboardText( text ) end
 ---@return any text 
 function RL.GetClipboardText() end
 
+---Enable waiting for events on EndDrawing(), no automatic event polling
+---@return any RL.EnableEventWaiting
+function  RL.EnableEventWaiting() end
+
+---Disable waiting for events on EndDrawing(), automatic events polling
+---@return any RL.DisableEventWaiting
+function  RL.DisableEventWaiting() end
+
 -- Core - Cursor-related functions
 
 ---Shows cursor
@@ -1544,8 +1633,8 @@ function  RL.EndScissorMode() end
 ---NOTE: Set nil if no shader
 ---- Failure return nil
 ---- Success return Shader
----@param vsFileName string
----@param fsFileName string
+---@param vsFileName string|nil
+---@param fsFileName string|nil
 ---@return any shader 
 function RL.LoadShader( vsFileName, fsFileName ) end
 
@@ -1553,8 +1642,8 @@ function RL.LoadShader( vsFileName, fsFileName ) end
 ---NOTE: Set nil if no shader
 ---- Failure return nil
 ---- Success return Shader
----@param vsCode string
----@param fsCode string
+---@param vsCode string|nil
+---@param fsCode string|nil
 ---@return any shader 
 function RL.LoadShaderFromMemory( vsCode, fsCode ) end
 
@@ -1693,11 +1782,6 @@ function RL.GetScreenToWorld2D( position, camera ) end
 ---@return any RL.SetTargetFPS
 function  RL.SetTargetFPS( fps ) end
 
----Get current FPS
----- Success return int
----@return any FPS 
-function RL.GetFPS() end
-
 ---Get time in seconds for last frame drawn (Delta time)
 ---- Success return float
 ---@return any delta 
@@ -1707,6 +1791,26 @@ function RL.GetFrameTime() end
 ---- Success return float
 ---@return any time 
 function RL.GetTime() end
+
+---Get current FPS
+---- Success return int
+---@return any FPS 
+function RL.GetFPS() end
+
+-- Core - Custom frame control functions
+
+---Swap back buffer with front buffer (screen drawing)
+---@return any RL.SwapScreenBuffer
+function  RL.SwapScreenBuffer() end
+
+---Register all input events
+---@return any RL.PollInputEvents
+function  RL.PollInputEvents() end
+
+---Wait for some time (halt program execution)
+---@param seconds any
+---@return any RL.WaitTime
+function  RL.WaitTime( seconds ) end
 
 -- Core - Random values generation functions
 
@@ -1894,7 +1998,7 @@ function RL.LoadDirectoryFiles( dirPath ) end
 ---Load directory filepaths with extension filtering and recursive directory scan
 ---- Success return string{}
 ---@param basePath string
----@param filter string
+---@param filter string|nil
 ---@param scanSubdirs boolean
 ---@return any fileNames 
 function RL.LoadDirectoryFilesEx( basePath, filter, scanSubdirs ) end
@@ -1955,6 +2059,87 @@ function RL.EncodeDataBase64( data ) end
 ---@return any outputSize 
 function RL.DecodeDataBase64( data ) end
 
+-- Core - Automation events functionality
+
+---Load automation events list from file, nil for empty list, capacity = MAX_AUTOMATION_EVENTS
+---- Success return AutomationEventList
+---@param fileName string|nil
+---@return any eventList 
+function RL.LoadAutomationEventList( fileName ) end
+
+---Unload automation events list from file
+---@param list any
+---@return any RL.UnloadAutomationEventList
+function  RL.UnloadAutomationEventList( list ) end
+
+---Export automation events list as text file
+---- Failure return false
+---- Success return true
+---@param fileName string
+---@return any success 
+function RL.ExportAutomationEventList( fileName ) end
+
+---Set automation event list to record to
+---@param list any
+---@return any RL.SetAutomationEventList
+function  RL.SetAutomationEventList( list ) end
+
+---Set automation event internal base frame to start recording
+---@param frame integer
+---@return any RL.SetAutomationEventBaseFrame
+function  RL.SetAutomationEventBaseFrame( frame ) end
+
+---Start recording automation events (AutomationEventList must be set)
+---@return any RL.StartAutomationEventRecording
+function  RL.StartAutomationEventRecording() end
+
+---Stop recording automation events
+---@return any RL.StopAutomationEventRecording
+function  RL.StopAutomationEventRecording() end
+
+---Play a recorded automation event
+---@param event any
+---@return any RL.PlayAutomationEvent
+function  RL.PlayAutomationEvent( event ) end
+
+---Get automation event list capacity
+---- Success return int
+---@param list any
+---@return any capacity 
+function RL.GetAutomationEventListCapacity( list ) end
+
+---Get automation event list count
+---- Success return int
+---@param list any
+---@return any count 
+function RL.GetAutomationEventListCount( list ) end
+
+---Get automation event from automation event list. Return as lightuserdata
+---- Failure return nil
+---- Success return AutomationEvent
+---@param list any
+---@param index integer
+---@return any event 
+function RL.GetAutomationEvent( list, index ) end
+
+---Get automation event frame
+---- Success return int
+---@param event any
+---@return any frame 
+function RL.GetAutomationEventFrame( event ) end
+
+---Get automation event type
+---- Success return int
+---@param event any
+---@return any type 
+function RL.GetAutomationEventType( event ) end
+
+---Get automation event params
+---- Success return int{}
+---@param event any
+---@return any params 
+function RL.GetAutomationEventParams( event ) end
+
 -- Core - Input-related functions: keyboard
 
 ---Detect if a key has been pressed once
@@ -1962,6 +2147,12 @@ function RL.DecodeDataBase64( data ) end
 ---@param key integer
 ---@return any pressed 
 function RL.IsKeyPressed( key ) end
+
+---Check if a key has been pressed again (Only PLATFORM_DESKTOP)
+---- Success return bool
+---@param key integer
+---@return any pressed 
+function RL.IsKeyPressedRepeat( key ) end
 
 ---Detect if a key is being pressed
 ---- Success return bool
@@ -2030,6 +2221,18 @@ function RL.IsGamepadButtonDown( gamepad, button ) end
 ---@param button integer
 ---@return any released 
 function RL.IsGamepadButtonReleased( gamepad, button ) end
+
+---Check if a gamepad button is NOT being pressed
+---- Success return bool
+---@param gamepad integer
+---@param button integer
+---@return any notPressed 
+function RL.IsGamepadButtonUp( gamepad, button ) end
+
+---Get the last gamepad button pressed
+---- Success return int
+---@return any button 
+function RL.GetGamepadButtonPressed() end
 
 ---Return gamepad axis count for a gamepad
 ---- Success return int
@@ -2101,10 +2304,15 @@ function  RL.SetMouseOffset( offset ) end
 ---@return any RL.SetMouseScale
 function  RL.SetMouseScale( scale ) end
 
----Returns mouse wheel movement Y
+---Get mouse wheel movement for X or Y, whichever is larger
 ---- Success return float
 ---@return any movement 
 function RL.GetMouseWheelMove() end
+
+---Get mouse wheel movement for both X and Y
+---- Success return Vector2
+---@return any movement 
+function RL.GetMouseWheelMoveV() end
 
 ---Set mouse cursor
 ---@param cursor integer
@@ -2430,8 +2638,10 @@ function  RL.UnloadBuffer( buffer ) end
 ---Get buffer data as table in the format it was stored
 ---- Success return data{}
 ---@param buffer any
+---@param position integer
+---@param length integer
 ---@return any data 
-function RL.GetBufferData( buffer ) end
+function RL.GetBufferData( buffer, position, length ) end
 
 ---Get buffer type
 ---- Success return int
@@ -2439,11 +2649,23 @@ function RL.GetBufferData( buffer ) end
 ---@return any type 
 function RL.GetBufferType( buffer ) end
 
----Get buffer size
+---Get buffer size in bytes
 ---- Success return int
 ---@param buffer any
 ---@return any size 
 function RL.GetBufferSize( buffer ) end
+
+---Get buffer element size in bytes
+---- Success return int
+---@param buffer any
+---@return any size 
+function RL.GetBufferElementSize( buffer ) end
+
+---Get buffer element count
+---- Success return int
+---@param buffer any
+---@return any length 
+function RL.GetBufferLength( buffer ) end
 
 ---Write buffer data to binary file
 ---@param buffer any
@@ -2950,6 +3172,16 @@ function RL.LoadImageAnim( fileName ) end
 ---@return any frameCount 
 function RL.LoadImageFromMemory( fileType, data ) end
 
+---Load image from data
+---- Success return Image
+---@param data any
+---@param size table
+---@param mipmaps integer
+---@param format integer
+---@return any image
+---@return any frameCount 
+function RL.LoadImageFromData( data, size, mipmaps, format ) end
+
 ---Load image from GPU texture data
 ---- Success return Image
 ---@param texture any
@@ -3082,6 +3314,14 @@ function RL.ImageCopy( image ) end
 ---@return any image 
 function RL.ImageFromImage( image, rec ) end
 
+---Create an image from text (default font)
+---- Success return Image
+---@param text string
+---@param fontSize integer
+---@param tint table
+---@return any image 
+function RL.ImageText( text, fontSize, tint ) end
+
 ---Create an image from text (custom sprite font)
 ---- Success return Image
 ---@param font any
@@ -3090,7 +3330,7 @@ function RL.ImageFromImage( image, rec ) end
 ---@param spacing number
 ---@param tint table
 ---@return any image 
-function RL.ImageText( font, text, fontSize, spacing, tint ) end
+function RL.ImageTextEx( font, text, fontSize, spacing, tint ) end
 
 ---Convert image data to desired format
 ---@param image any
@@ -3348,6 +3588,15 @@ function  RL.ImageDrawRectangleLines( dst, rec, thick, color ) end
 ---@return any RL.ImageDraw
 function  RL.ImageDraw( dst, src, srcRec, dstRec, tint ) end
 
+---Draw text (using default font) within an image (destination)
+---@param dst any
+---@param text string
+---@param position table
+---@param fontSize number
+---@param tint table
+---@return any RL.ImageDrawText
+function  RL.ImageDrawText( dst, text, position, fontSize, tint ) end
+
 ---Draw text (Custom sprite font) within an image (Destination)
 ---@param dst any
 ---@param font any
@@ -3493,6 +3742,15 @@ function RL.GetTextureFormat( texture ) end
 ---@return any RL.DrawTexture
 function  RL.DrawTexture( texture, position, tint ) end
 
+---Draw a Texture2D with extended parameters
+---@param texture any
+---@param position table
+---@param rotation number
+---@param scale number
+---@param tint table
+---@return any RL.DrawTextureEx
+function  RL.DrawTextureEx( texture, position, rotation, scale, tint ) end
+
 ---Draw a part of a texture defined by a rectangle
 ---@param texture any
 ---@param source table
@@ -3633,13 +3891,6 @@ function RL.ColorAlphaBlend( dst, src, tint ) end
 ---@param hexValue integer
 ---@return any color 
 function RL.GetColor( hexValue ) end
-
----Get pixel color from source texture
----- Success return Color
----@param texture any
----@param position table
----@return any color 
-function RL.GetPixelColor( texture, position ) end
 
 ---Get pixel data size in bytes for certain format
 ---- Success return int
@@ -3820,6 +4071,13 @@ function RL.DrawTextBoxedTinted( font, text, rec, fontSize, spacing, wordWrap, t
 ---@return any size 
 function RL.SetTextLineSpacing( spacing ) end
 
+---Measure string width for default font
+---- Success return int
+---@param text string
+---@param fontSize integer
+---@return any width 
+function RL.MeasureText( text, fontSize ) end
+
 ---Measure string size for Font
 ---- Success return Vector2
 ---@param font any
@@ -3827,7 +4085,7 @@ function RL.SetTextLineSpacing( spacing ) end
 ---@param fontSize number
 ---@param spacing number
 ---@return any size 
-function RL.MeasureText( font, text, fontSize, spacing ) end
+function RL.MeasureTextEx( font, text, fontSize, spacing ) end
 
 ---Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found
 ---- Success return int
@@ -3974,23 +4232,26 @@ function RL.GetCodepointCount( text ) end
 ---Get codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
 ---- Success return int, int
 ---@param text string
+---@param position integer
 ---@return any codepoint
 ---@return any codepointSize 
-function RL.GetCodepoint( text ) end
+function RL.GetCodepoint( text, position ) end
 
 ---Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
 ---- Success return int, int
 ---@param text string
+---@param position integer
 ---@return any codepoint
 ---@return any codepointSize 
-function RL.GetCodepointNext( text ) end
+function RL.GetCodepointNext( text, position ) end
 
 ---Get previous codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
 ---- Success return int, int
 ---@param text string
+---@param position integer
 ---@return any codepoint
 ---@return any codepointSize 
-function RL.GetCodepointPrevious( text ) end
+function RL.GetCodepointPrevious( text, position ) end
 
 ---Encode one codepoint into UTF-8 byte array
 ---- Success return string
@@ -3999,6 +4260,22 @@ function RL.GetCodepointPrevious( text ) end
 function RL.CodepointToUTF8( codepoint ) end
 
 -- Text - Text strings management functions (no UTF-8 strings, only byte chars)
+
+---Get a piece of a text string
+---- Success return string
+---@param text string
+---@param position integer
+---@param length integer
+---@return any text 
+function RL.TextSubtext( text, position, length ) end
+
+---Replace text string
+---- Success return string
+---@param text string
+---@param replace string
+---@param by string
+---@return any text 
+function RL.TextReplace( text, replace, by ) end
 
 ---Insert text in a specific position, moves all text forward
 ---- Success return string
@@ -4014,6 +4291,19 @@ function RL.TextInsert( text, insert, position ) end
 ---@param delimiter any
 ---@return any splits 
 function RL.TextSplit( text, delimiter ) end
+
+---Find first text occurrence within a string
+---- Success return int
+---@param text string
+---@param find string
+---@return any index 
+function RL.TextFindIndex( text, find ) end
+
+---Get Pascal case notation version of provided string
+---- Success return string
+---@param text string
+---@return any text 
+function RL.TextToPascal( text ) end
 
 -- Models - Basic geometric 3D shapes drawing functions
 
@@ -4046,6 +4336,12 @@ function  RL.DrawCircle3D( center, radius, rotationAxis, rotationAngle, color ) 
 ---@param color table
 ---@return any RL.DrawTriangle3D
 function  RL.DrawTriangle3D( v1, v2, v3, color ) end
+
+---Draw a triangle strip defined by points
+---@param points table
+---@param color table
+---@return any RL.DrawTriangleStrip3D
+function  RL.DrawTriangleStrip3D( points, color ) end
 
 ---Draw cube
 ---@param position table
@@ -4474,6 +4770,14 @@ function RL.GenMeshCube( size ) end
 ---@return any mesh 
 function RL.GenMeshSphere( radius, rings, slices ) end
 
+---Generate half-sphere mesh (no bottom cap)
+---- Success return Mesh
+---@param radius number
+---@param rings integer
+---@param slices integer
+---@return any mesh 
+function RL.GenMeshHemiSphere( radius, rings, slices ) end
+
 ---Generate cylinder mesh
 ---- Success return Mesh
 ---@param radius number
@@ -4863,6 +5167,13 @@ function RL.LoadSoundAlias( source ) end
 ---@return any isReady 
 function RL.IsSoundReady( sound ) end
 
+---Update sound buffer with new data
+---@param sound any
+---@param data any
+---@param sampleCount integer
+---@return any RL.UpdateSound
+function  RL.UpdateSound( sound, data, sampleCount ) end
+
 ---Unload wave data
 ---@param wave any
 ---@return any RL.UnloadWave
@@ -4945,6 +5256,12 @@ function  RL.SetSoundPan( sound, pan ) end
 ---@param channels integer
 ---@return any RL.WaveFormat
 function  RL.WaveFormat( wave, sampleRate, sampleSize, channels ) end
+
+---Load samples data from wave as a 32bit float data array
+---- Success return float{}
+---@param wave any
+---@return any samples 
+function RL.LoadWaveSamples( wave ) end
 
 ---Copy a wave to a new wave
 ---- Success return Wave
@@ -5065,6 +5382,12 @@ function RL.GetMusicTimeLength( music ) end
 function RL.GetMusicTimePlayed( music ) end
 
 -- Math - Utils
+
+---Round float value
+---- Success return float
+---@param value number
+---@return any result 
+function RL.Round( value ) end
 
 ---Clamp float value
 ---- Success return float
@@ -5430,6 +5753,20 @@ function RL.Vector3Divide( v1, v2 ) end
 ---@param v table
 ---@return any result 
 function RL.Vector3Normalize( v ) end
+
+---Calculate the projection of the vector v1 on to v2
+---- Success return Vector3
+---@param v1 table
+---@param v2 table
+---@return any result 
+function RL.Vector3Project( v1, v2 ) end
+
+---Calculate the rejection of the vector v1 on to v2
+---- Success return Vector3
+---@param v1 table
+---@param v2 table
+---@return any result 
+function RL.Vector3Reject( v1, v2 ) end
 
 ---Orthonormalize provided vectors. Makes vectors normalized and orthogonal to each other.
 ---Gram-Schmidt function implementation
@@ -5900,7 +6237,7 @@ function RL.GuiGetState() end
 ---@return any RL.GuiSetFont
 function  RL.GuiSetFont( font ) end
 
----Get gui custom font (global state)
+---Get gui custom font (global state). Return as lightuserdata
 ---- Success return Font
 ---@return any font 
 function RL.GuiGetFont() end
@@ -6561,6 +6898,17 @@ function  RL.rlEnableVertexAttribute( index ) end
 ---@return any RL.rlDisableVertexAttribute
 function  RL.rlDisableVertexAttribute( index ) end
 
+---Enable attribute state pointer
+---@param vertexAttribType integer
+---@param buffer any
+---@return any RL.rlEnableStatePointer
+function  RL.rlEnableStatePointer( vertexAttribType, buffer ) end
+
+---Disable attribute state pointer
+---@param vertexAttribType integer
+---@return any RL.rlDisableStatePointer
+function  RL.rlDisableStatePointer( vertexAttribType ) end
+
 -- RLGL - Textures state
 
 ---Select and active a texture slot
@@ -6627,6 +6975,13 @@ function  RL.rlDisableFramebuffer() end
 ---@return any RL.rlActiveDrawBuffers
 function  RL.rlActiveDrawBuffers( count ) end
 
+---Blit active framebuffer to main framebuffer
+---@param srcRect table
+---@param dstRect table
+---@param bufferMask integer
+---@return any RL.rlBlitFramebuffer
+function  RL.rlBlitFramebuffer( srcRect, dstRect, bufferMask ) end
+
 -- RLGL - General render state
 
 ---Enable color blending
@@ -6682,6 +7037,10 @@ function  RL.rlScissor( area ) end
 ---Enable wire mode
 ---@return any RL.rlEnableWireMode
 function  RL.rlEnableWireMode() end
+
+---Enable point mode
+---@return any RL.rlEnablePointMode
+function  RL.rlEnablePointMode() end
 
 ---Disable wire mode
 ---@return any RL.rlDisableWireMode
@@ -7229,10 +7588,17 @@ function  RL.rlSetMatrixProjectionStereo( right, left ) end
 ---@return any RL.rlSetMatrixViewOffsetStereo
 function  RL.rlSetMatrixViewOffsetStereo( right, left ) end
 
--- OpenGL - Framebuffer management
+-- OpenGL - Rendering
+
+---Clear buffers to preset values
+---@param mask integer
+---@return any RL.glClear
+function  RL.glClear( mask ) end
+
+-- OpenGL - Frame Buffers
 
 ---Copy a block of pixels from one framebuffer object to another.
----Use -1 RenderTexture for window framebuffer
+---Use nil RenderTexture for window framebuffer
 ---@param srcTex any
 ---@param dstTex any
 ---@param srcRect table
@@ -7241,6 +7607,68 @@ function  RL.rlSetMatrixViewOffsetStereo( right, left ) end
 ---@param filter integer
 ---@return any RL.glBlitFramebuffer
 function  RL.glBlitFramebuffer( srcTex, dstTex, srcRect, dstRect, mask, filter ) end
+
+-- OpenGL - State Management
+
+---Enable server-side GL capabilities
+---@param cap integer
+---@return any RL.glEnable
+function  RL.glEnable( cap ) end
+
+---Disable server-side GL capabilities
+---@param cap integer
+---@return any RL.glDisable
+function  RL.glDisable( cap ) end
+
+---Set front and back function and reference value for stencil testing
+---@param func integer
+---@param ref integer
+---@param mask integer
+---@return any RL.glStencilFunc
+function  RL.glStencilFunc( func, ref, mask ) end
+
+---Set front and/or back function and reference value for stencil testing
+---@param face integer
+---@param func integer
+---@param ref integer
+---@param mask integer
+---@return any RL.glStencilFuncSeparate
+function  RL.glStencilFuncSeparate( face, func, ref, mask ) end
+
+---Control the front and back writing of individual bits in the stencil planes
+---@param mask integer
+---@return any RL.glStencilMask
+function  RL.glStencilMask( mask ) end
+
+---Control the front and/or back writing of individual bits in the stencil planes
+---@param face integer
+---@param mask integer
+---@return any RL.glStencilMaskSeparate
+function  RL.glStencilMaskSeparate( face, mask ) end
+
+---Set front and back stencil test actions
+---@param sfail integer
+---@param dpfail integer
+---@param dppass integer
+---@return any RL.glStencilOp
+function  RL.glStencilOp( sfail, dpfail, dppass ) end
+
+---Set front and back stencil test actions
+---@param face integer
+---@param sfail integer
+---@param dpfail integer
+---@param dppass integer
+---@return any RL.glStencilOpSeparate
+function  RL.glStencilOpSeparate( face, sfail, dpfail, dppass ) end
+
+-- OpenGL - Utility
+
+---Return a string describing the current GL connection. GL_EXTENSIONS returns the extension string supported by the implementation at index
+---- Success return string
+---@param name integer
+---@param index integer|nil
+---@return any connection 
+function RL.glGetString( name, index ) end
 
 -- Easings - Linear Easing functions
 

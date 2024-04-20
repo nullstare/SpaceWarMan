@@ -37,7 +37,7 @@ function Bullet:spawnParticles( source )
 	) )
 end
 
-function Bullet:physicsProcess( delta )
+function Bullet:physicsUpdate( delta )
 	local range = self.velocity:scale( delta )
 
 	self.position = self.position + range

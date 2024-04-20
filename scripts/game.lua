@@ -19,14 +19,14 @@ function Game:start()
 	RL.PlayMusicStream( Resources.music.level1 )
 end
 
-function Game:process( delta )
+function Game:update( delta )
 	if self.run and not Menu.run then
-		Player:process( delta )
-		Entities:process( delta )
-		self:physicsProcess( delta )
+		Player:update( delta )
+		Entities:update( delta )
+		self:physicsUpdate( delta )
 	end
-	-- UI needs to process even when game doesn't.
-	UI:process( delta )
+	-- UI needs to update even when game doesn't.
+	UI:update( delta )
 
 	if Settings.gamepad == nil and RL.IsGamepadAvailable( 0 ) then
 		Settings.gamepad = 0
@@ -37,14 +37,14 @@ function Game:process( delta )
 	end
 end
 
-function Game:physicsProcess( delta )
+function Game:physicsUpdate( delta )
 	self.physicsAccumulator = self.physicsAccumulator + delta
 
 	local steps = math.floor( self.physicsAccumulator / self.physicsDelta )
 
 	for i = 0, steps - 1 do
-		Player:physicsProcess( self.physicsDelta, i )
-		Entities:physicsProcess( self.physicsDelta, i )
+		Player:physicsUpdate( self.physicsDelta, i )
+		Entities:physicsUpdate( self.physicsDelta, i )
 
 		self.physicsAccumulator = self.physicsAccumulator - self.physicsDelta
 	end

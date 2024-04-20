@@ -83,7 +83,7 @@ function Droid:takeDamage( damage )
 	end
 end
 
-function Droid:process( delta )
+function Droid:update( delta )
 	self.sprite.HFacing = self.facing
 
 	-- Drop from platform.
@@ -109,7 +109,7 @@ function Droid:process( delta )
 	end
 end
 
-function Droid:physicsProcess( delta, step )
+function Droid:physicsUpdate( delta, step )
 	if self.action == self.ACTIONS.WALK then
 		self.velocity.x = self.facing * self.WALK_SPEED * delta
 	elseif self.action == self.ACTIONS.JUMP then

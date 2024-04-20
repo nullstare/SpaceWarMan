@@ -35,12 +35,12 @@ function ParticleEmitter:add( particle )
 	table.insert( self.particles, particle )
 end
 
-function ParticleEmitter:process( delta )
+function ParticleEmitter:update( delta )
 	local hasParticlesLeft = false
 
 	for i, particle in ipairs( self.particles ) do
 		if 0 < particle.lifetime then
-			particle:process( delta )
+			particle:update( delta )
 			hasParticlesLeft = true
 		end
 	end

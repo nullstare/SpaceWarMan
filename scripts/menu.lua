@@ -26,7 +26,7 @@ end
 function Menu:init()
 	self.title = Resources.language.spaceWarMan
 
-	local titleSize = Vec2:new( RL.MeasureText( RL.GetFontDefault(), self.title, 20, 2 ) )
+	local titleSize = Vec2:newT( RL.MeasureTextEx( RL.GetFontDefault(), self.title, 20, 2 ) )
 
 	self.titleRect = Rect:new(
 		Window.FRAMEBUFFER_SIZE.x / 2 - titleSize.x / 2,
@@ -53,7 +53,7 @@ local function boolString( bool )
 	end
 end
 
-function Menu:process( delta )
+function Menu:update( delta )
 	local menuPressed = RL.IsKeyPressed( Settings.keys.menu )
 	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.menu ) )
 

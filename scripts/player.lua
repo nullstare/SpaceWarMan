@@ -51,7 +51,7 @@ function Player:reset()
 	self.collectedEnergyTanks = {}
 	self.doubleJump = false
 	self.usedDoubleJump = false
-	self.jumpPressed = false -- Set false in physics_process when input is handled.
+	self.jumpPressed = false -- Set false in physicsUpdate when input is handled.
 end
 
 function Player:init( pos )
@@ -118,7 +118,7 @@ function Player:heal( amount )
 	self.health = math.min( self.health + 1, self.energyTanks * self.TANK_HEALTH )
 end
 
-function Player:process( delta )
+function Player:update( delta )
 	if self.health <= 0 then
 		return
 	end
@@ -144,7 +144,7 @@ function Player:process( delta )
 		local vel = Vec2:new()
 
 		if self.aim == self.AIM.UP then
-			pos = self.position + Vec2:new( 0, self.gunPosition.y )
+			pos = self.position + Vec2:temp( 0, self.gunPosition.y )
 			vel = Vec2:new( 0, -self.BULLET_SPEED )
 		elseif self.aim == self.AIM.DIAGONAL then
 			pos = self.position + Vec2:new( self.gunPosition.x * self.facing, self.gunPosition.y )
@@ -191,7 +191,7 @@ function Player:process( delta )
 	end
 end
 
-function Player:physicsProcess( delta, step )
+function Player:physicsUpdate( delta, step )
 	if self.health <= 0 then
 		return
 	end

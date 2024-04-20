@@ -52,32 +52,32 @@ function Entities:clear()
 	self.pickups = {}
 end
 
-function Entities:processTable( t, delta )
+function Entities:updateTable( t, delta )
 	for _, obj in ipairs( t ) do
-		if obj ~= self.FREE and obj.process ~= nil then
-			obj:process( delta )
+		if obj ~= self.FREE and obj.update ~= nil then
+			obj:update( delta )
 		end
 	end
 end
 
-function Entities:processPhysicsTable( t, delta, step )
+function Entities:updatePhysicsTable( t, delta, step )
 	for _, obj in ipairs( t ) do
-		if obj ~= self.FREE and obj.physicsProcess ~= nil then
-			obj:physicsProcess( delta, step )
+		if obj ~= self.FREE and obj.physicsUpdate ~= nil then
+			obj:physicsUpdate( delta, step )
 		end
 	end
 end
 
-function Entities:process( delta )
-	self:processTable( self.enemies, delta )
-	self:processTable( self.emitters, delta )
-	self:processTable( self.pickups, delta )
+function Entities:update( delta )
+	self:updateTable( self.enemies, delta )
+	self:updateTable( self.emitters, delta )
+	self:updateTable( self.pickups, delta )
 end
 
-function Entities:physicsProcess( delta, step )
-	self:processPhysicsTable( self.bullets, delta, step )
-	self:processPhysicsTable( self.enemies, delta, step )
-	self:processPhysicsTable( self.pickups, delta, step )
+function Entities:physicsUpdate( delta, step )
+	self:updatePhysicsTable( self.bullets, delta, step )
+	self:updatePhysicsTable( self.enemies, delta, step )
+	self:updatePhysicsTable( self.pickups, delta, step )
 end
 
 function Entities:drawTable( t )

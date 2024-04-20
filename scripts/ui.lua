@@ -22,7 +22,7 @@ function UI:new()
     return object
 end
 
-function UI:process( delta )
+function UI:update( delta )
 	local shootPressed = RL.IsKeyPressed( Settings.keys.shoot )
 	or ( Settings.gamepad ~= nil and RL.IsGamepadButtonPressed( Settings.gamepad, Settings.buttons.shoot ) )
 
@@ -34,7 +34,7 @@ end
 
 function UI:drawUi()
 	local containers = Player.energyTanks
-	local pos = Vec2:new( 1, 0 )
+	local pos = Vec2:temp( 1, 0 )
 
 	for i = 0, containers - 1 do
 		if i * Player.TANK_HEALTH < Player.health then
@@ -65,9 +65,9 @@ function UI:setMessage( message )
 end
 
 function UI:drawMessage()
-	local center = Vec2:new( Window.FRAMEBUFFER_SIZE.x / 2, Window.FRAMEBUFFER_SIZE.y / 2 )
-	local textSize = Vec2:new( RL.MeasureText( RL.GetFontDefault(), self.message, self.FONT_SIZE, self.SPACING ) )
-	local textRect = Rect:new( math.floor( center.x - textSize.x / 2 ), math.floor( center.y - textSize.y / 2 ), textSize.x, textSize.y )
+	local center = Vec2:temp( Window.FRAMEBUFFER_SIZE.x / 2, Window.FRAMEBUFFER_SIZE.y / 2 )
+	local textSize = Vec2:tempT( RL.MeasureTextEx( RL.GetFontDefault(), self.message, self.FONT_SIZE, self.SPACING ) )
+	local textRect = Rect:temp( math.floor( center.x - textSize.x / 2 ), math.floor( center.y - textSize.y / 2 ), textSize.x, textSize.y )
 
 	RL.DrawRectangle( self.MESSAGE_RECT, RL.BLACK )
 	RL.DrawTextEx( RL.GetFontDefault(), self.message, textRect, self.FONT_SIZE, self.SPACING, RL.WHITE )
